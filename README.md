@@ -219,6 +219,11 @@ You can safely commit:
 
 ## Documentation
 
+### Project Setup & Workflow
+- [Git Worktree Workflow](docs/GIT_WORKTREE_WORKFLOW.md) - Multi-branch development workflow
+- [Project Structure](docs/PROJECT_STRUCTURE.md) - Detailed structure documentation
+- [Audit README](docs/AUDIT_README.md) - Workspace audit tool guide
+
 ### Migration Guides
 - [00_RDS DLT Migration Guide](docs/migration/00_rds_dlt_migration_guide.md) - Complete 8-12 week migration plan
 - [Dim FDE DLT Analysis](docs/analysis/dim_fde_dlt_analysis.md) - Technical analysis of FDE table migration
@@ -293,13 +298,31 @@ Helper utilities for common tasks.
 
 ## Development Workflow
 
+### Git Worktree Setup (Recommended)
+
+This project is configured to use **git worktrees** for efficient multi-branch development. This allows you to work on multiple branches simultaneously without switching contexts.
+
+**See**: [docs/GIT_WORKTREE_WORKFLOW.md](docs/GIT_WORKTREE_WORKFLOW.md) for complete worktree documentation.
+
+Quick start:
+```bash
+# Create a feature branch worktree
+git worktree add ../rds_databricks_claude-feature feature/your-feature-name
+
+# List all worktrees
+git worktree list
+
+# Work in the new worktree
+cd ../rds_databricks_claude-feature
+```
+
 ### Making Changes
 
-1. Create a new branch for your work
+1. Create a new branch and worktree for your work
 2. Make changes to scripts or documentation
 3. Test your changes thoroughly
 4. Commit with clear messages
-5. Push and create a pull request
+5. Merge to main when ready
 
 ### Adding New Scripts
 
