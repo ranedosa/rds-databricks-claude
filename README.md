@@ -220,6 +220,7 @@ You can safely commit:
 ## Documentation
 
 ### Project Setup & Workflow
+- [**Daily Workflow**](docs/DAILY_WORKFLOW.md) - **START HERE EACH DAY** - Branch management guide
 - [Git Worktree Workflow](docs/GIT_WORKTREE_WORKFLOW.md) - Multi-branch development workflow
 - [Project Structure](docs/PROJECT_STRUCTURE.md) - Detailed structure documentation
 - [Audit README](docs/AUDIT_README.md) - Workspace audit tool guide
@@ -298,16 +299,36 @@ Helper utilities for common tasks.
 
 ## Development Workflow
 
-### Git Worktree Setup (Recommended)
+### Starting Your Day (IMPORTANT!)
 
-This project is configured to use **git worktrees** for efficient multi-branch development. This allows you to work on multiple branches simultaneously without switching contexts.
+**Always start your work session with proper branch management:**
+
+#### Option 1: Use Claude Code (Recommended)
+```
+/start-work
+```
+Claude will guide you through:
+- Checking your current branch
+- Helping you continue existing work or create a new feature branch
+- Setting up worktrees for new features
+
+#### Option 2: Use the Shell Script
+```bash
+./start-day.sh
+```
+
+**See**: [docs/DAILY_WORKFLOW.md](docs/DAILY_WORKFLOW.md) for complete daily workflow guide.
+
+### Git Worktree Setup
+
+This project uses **git worktrees** for efficient multi-branch development. This allows you to work on multiple branches simultaneously without switching contexts.
 
 **See**: [docs/GIT_WORKTREE_WORKFLOW.md](docs/GIT_WORKTREE_WORKFLOW.md) for complete worktree documentation.
 
 Quick start:
 ```bash
 # Create a feature branch worktree
-git worktree add ../rds_databricks_claude-feature feature/your-feature-name
+git worktree add -b feature/your-feature ../rds_databricks_claude-feature
 
 # List all worktrees
 git worktree list
@@ -318,11 +339,12 @@ cd ../rds_databricks_claude-feature
 
 ### Making Changes
 
-1. Create a new branch and worktree for your work
-2. Make changes to scripts or documentation
-3. Test your changes thoroughly
-4. Commit with clear messages
-5. Merge to main when ready
+1. **Start your day**: Run `/start-work` or `./start-day.sh`
+2. **Create branch**: Always use feature branches for new work
+3. **Make changes**: Edit scripts or documentation
+4. **Test thoroughly**: Run validation and tests
+5. **Commit frequently**: Clear, descriptive commit messages
+6. **Merge to main**: When feature is complete
 
 ### Adding New Scripts
 
