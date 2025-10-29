@@ -1,0 +1,68 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Configuration files (SENSITIVE - NEVER COMMIT!)
+config/
+.databrickscfg
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (large/sensitive)
+data/exports/*.json
+data/exports/*.csv
+data/exports/*.parquet
+!data/exports/.gitkeep
+
+# Results and logs
+results/
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Databricks specific
+*.dbc
+.databricks/
+
+# OS specific
+Thumbs.db
