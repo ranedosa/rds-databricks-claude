@@ -30,11 +30,35 @@ This project provides comprehensive documentation of the Snappt fraud detection 
 | **CORE_ENTITY_MODEL.md** | 24KB | 14 | Foundation entities: applicants, properties, companies, users, access control |
 | **FRAUD_DETECTION_WORKFLOW.md** | 24KB | 7 | Document fraud detection with ML/AI analysis and human review |
 | **VERIFICATION_WORKFLOWS.md** | 26KB | 9 | Income, asset, identity, and rent verification workflows |
+| **ERD_DIAGRAMS.md** | 18KB | 30 | **Visual ERD diagrams** for all documented tables (8 Mermaid diagrams) |
 | **DATABASE_SCHEMA_SUMMARY.md** | 9.7KB | - | High-level overview of all 7 databases |
 | **extract_schemas.py** | 1.6KB | - | Schema extraction utility script |
-| **README.md** (this file) | - | - | Project summary and findings |
+| **README.md** (this file) | 23KB | - | Project summary and findings |
 
-**Total Documentation:** 84KB across 5 files
+**Total Documentation:** 126KB across 7 files
+
+### Visual Diagrams
+
+**📊 [ERD_DIAGRAMS.md](ERD_DIAGRAMS.md)** - 8 visual diagrams using Mermaid syntax:
+
+1. **Core Entity Model** (2 diagrams)
+   - Property Hierarchy & Applicant Flow
+   - Ownership & Access Control Model
+
+2. **Fraud Detection Workflow** (2 diagrams)
+   - Complete Fraud Detection Flow
+   - ML/AI Analysis Details
+
+3. **Verification Workflows** (2 diagrams)
+   - Income & Asset Verification
+   - Identity & Rent Verification
+
+4. **Integration Overview** (3 diagrams)
+   - Complete Data Flow (Entry → Result)
+   - Result Aggregation Logic
+   - User Access Control Model
+
+**Viewing:** Diagrams render automatically in GitHub, GitLab, VS Code (with Mermaid extension), or [Mermaid Live Editor](https://mermaid.live/)
 
 ---
 
@@ -562,26 +586,39 @@ review_method ENUM:
 
 ---
 
-## Visual Diagrams (To Be Created)
+## Visual Diagrams ✅
 
-### Planned ERD Diagrams
+### ERD Diagrams Created
 
-1. **Core Entity Model Diagram**
-   - Companies → Properties → Folders → Entries → Applicants flow
-   - User access control (users_properties, users_owners)
+**See:** [ERD_DIAGRAMS.md](ERD_DIAGRAMS.md) for all visual diagrams
 
-2. **Fraud Detection Workflow Diagram**
-   - Document upload → ML/AI analysis → Review → Final determination
+**8 Mermaid Diagrams Completed:**
 
-3. **Verification Workflows Diagram**
-   - Income, Asset, Identity, Rent verification flows
-   - Multi-verification result aggregation
+1. **Core Entity Model Diagrams** (2 diagrams)
+   - Property Hierarchy & Applicant Flow - Shows the main data flow from companies to applicants
+   - Ownership & Access Control Model - User permissions and access grants
 
-4. **Full Database Overview**
-   - All 104 tables grouped by workflow
-   - Cross-workflow relationships
+2. **Fraud Detection Workflow Diagrams** (2 diagrams)
+   - Complete Fraud Detection Flow - Document upload through ML/AI to human review
+   - ML/AI Analysis Details - JSONB field structures and fraud indicators
 
-**Status:** Not yet created - next priority after completing table documentation
+3. **Verification Workflows Diagrams** (2 diagrams)
+   - Income & Asset Verification - Parallel verification workflows
+   - Identity & Rent Verification - Third-party provider integrations
+
+4. **Integration Overview Diagrams** (3 diagrams)
+   - Complete Data Flow - Entry creation to final determination (all 30 tables)
+   - Result Aggregation Logic - Multi-verification precedence rules
+   - User Access Control Model - Permission hierarchy visualization
+
+**Features:**
+- Mermaid syntax (renders in GitHub/GitLab/VS Code)
+- Primary/foreign keys clearly marked
+- Relationship cardinality shown
+- JSONB field examples included
+- Color-coded flow diagrams
+
+**Status:** ✅ Completed - 8 diagrams covering all 30 documented tables
 
 ---
 
@@ -595,9 +632,10 @@ review_method ENUM:
 - CORE_ENTITY_MODEL.md (14 tables)
 - FRAUD_DETECTION_WORKFLOW.md (7 tables)
 - VERIFICATION_WORKFLOWS.md (9 tables)
+- ERD_DIAGRAMS.md (8 visual diagrams for all 30 tables)
 - README.md (this summary)
 
-**Total Time:** ~2-3 hours of focused documentation work
+**Total Time:** ~3-4 hours of focused documentation work
 
 ---
 
@@ -622,31 +660,26 @@ review_method ENUM:
 
 ### Medium-term Goals
 
-4. **Create Visual ERD Diagrams**
-   - Mermaid or similar diagramming tool
-   - One diagram per major workflow
-   - Full database overview diagram
-
-5. **Document enterprise_postgresql** (6 tables)
+4. **Document enterprise_postgresql** (6 tables)
    - Cross-database integration details
    - Enterprise applicant/property links
 
-6. **Complete Remaining Tables** (~20 supporting tables)
+5. **Complete Remaining Tables** (~20 supporting tables)
    - Disputes, announcements, frequent flyer detection
    - Background jobs, invitations
 
 ### Long-term Goals
 
-7. **Generate Interactive Schema Explorer**
+6. **Generate Interactive Schema Explorer**
    - Web-based schema browser
    - Clickable table relationships
    - Search across all tables
 
-8. **API Documentation Integration**
+7. **API Documentation Integration**
    - Link database schema to API endpoints
    - Show which endpoints modify which tables
 
-9. **Data Dictionary**
+8. **Data Dictionary**
    - Standardized field definitions
    - Business glossary
    - Column naming conventions
