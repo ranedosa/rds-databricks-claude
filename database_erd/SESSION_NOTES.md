@@ -1,8 +1,8 @@
 # Database ERD Project - Session Notes & Working Context
 
 **Purpose:** Detailed technical notes for AI assistants to quickly resume work in future sessions
-**Last Updated:** 2025-11-25 (Session 2)
-**Current Progress:** 54 tables documented (65% complete)
+**Last Updated:** 2025-11-25 (Session 2 - Final)
+**Current Progress:** 59 tables documented (72% complete - 70% goal EXCEEDED!)
 
 ---
 
@@ -12,7 +12,7 @@
 - **Primary Database:** fraud_postgresql (production) - Snappt fraud detection platform
 - **Secondary Database:** enterprise_postgresql - Cross-database integration layer
 - **Total Tables:** ~75 core business tables in fraud_postgresql + 5 in enterprise_postgresql
-- **Current Status:** 49 fraud_postgresql + 5 enterprise_postgresql = 54 tables documented
+- **Current Status:** 54 fraud_postgresql + 5 enterprise_postgresql = 59 tables documented (72% complete)
 
 ### Why This Matters
 **User's Critical Requirement:**
@@ -191,6 +191,66 @@
 **Integration Flows:**
 - Outbound: Entry completed → webhooks → webhook_delivery_attempts → customer system
 - Inbound: Yardi poll → yardi_invites → create entry → yardi_entries → send results back
+
+#### Disputes Workflow (3 tables)
+50. **disputes** - Core dispute records (8 columns)
+    - PKs: application_submission_id FK, opened_by_user_id FK, dispute_category_id FK
+    - opened_at: SLA tracking timestamp (target: 24-48 hour response)
+    - description: Detailed dispute explanation (may contain PII)
+51. **dispute_categories** - Dispute reason lookup (5 columns)
+    - Active categories: Application Declined in Error, Bank Statement Issue, Income Verification Dispute, Incorrect or Missing Documents, Name or Info Doesn't Match, Upload or File Error, Other
+    - active boolean: Enable/disable categories
+52. **dispute_emails** - Email communication audit trail (5 columns)
+    - PKs: dispute_id FK
+    - email: Sender or recipient address
+    - email_id: External email system ID (Postmark, SendGrid)
+    - Complete bidirectional communication log
+
+**Common Dispute Scenarios:**
+- Fraud detection false positives (legitimate docs flagged)
+- Income calculation errors (wrong amount extracted)
+- Identity mismatches (name variations, maiden names)
+- Technical upload issues (failed uploads marked incomplete)
+- Policy misapplication (automated rejection that should be approved)
+
+**Key Metrics:**
+- Dispute rate by property
+- Most common categories
+- Average resolution time
+- Support team response time
+
+#### Frequent Flyer Detection (2 tables)
+53. **frequent_flyer_variations** - Normalized identity storage (11 columns)
+    - Original fields: first_name, last_name, email, phone
+    - Normalized fields: normalized_first_name, normalized_last_name, normalized_email, normalized_phone
+    - Normalization rules:
+      - Names: lowercase, trim, remove special chars
+      - Email: lowercase, remove dots (Gmail), remove plus addressing (john+test@gmail.com → john@gmail.com)
+      - Phone: digits only (555-123-4567 → 5551234567)
+54. **frequent_flyer_matched_confidences** - Match results with confidence scoring (10 columns)
+    - PKs: applicant_submission_id FK, frequent_flyer_variation_id FK
+    - Match flags: first_name_matched, last_name_matched, email_matched, phone_matched (booleans)
+    - confidence_score: 0-100 integer based on matched fields
+    - Confidence thresholds:
+      - 90-100: Very high (almost certainly same person)
+      - 70-89: High (flag for review)
+      - 50-69: Medium (investigate)
+      - <50: Low (informational)
+
+**Matching Algorithm:**
+- First name match: +25 points
+- Last name match: +25 points
+- Email match: +30 points
+- Phone match: +20 points
+
+**Use Cases:**
+- Serial fraud applicants (rejected at Property A, try Property B with different email)
+- Legitimate re-applications (better job 6 months later)
+- Identity theft detection (stolen name with fraudster's contact info)
+- Professional renters (applying to multiple properties)
+
+**Suspicious Pattern (HIGH PRIORITY):**
+- Email/phone match but name differs (50-60 points) = Using different name with same contact info = FRAUD INVESTIGATION
 
 ### enterprise_postgresql (5 tables) - 100% Complete!
 
