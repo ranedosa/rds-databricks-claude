@@ -4,7 +4,7 @@
 **Databases:** fraud_postgresql (Production), enterprise_postgresql (Integration Layer)
 **Started:** 2025-11-19
 **Last Updated:** 2025-11-25
-**Status:** 65% Complete (49 of ~75 core tables documented + 5 enterprise tables)
+**Status:** 72% Complete (54 of ~75 core tables documented + 5 enterprise tables)
 
 ---
 
@@ -15,11 +15,12 @@ This project provides comprehensive documentation of the Snappt fraud detection 
 **Key Findings:**
 - **104 active tables** in fraud_postgresql database (excluding deleted/backup tables)
 - **~75 core business tables** (after excluding audit/infrastructure tables)
-- **49 fraud_postgresql tables fully documented** with complete schema details, relationships, and business logic
+- **54 fraud_postgresql tables fully documented** with complete schema details, relationships, and business logic
 - **5 enterprise_postgresql tables documented** with cross-database relationships for multi-database queries
 - **Microservices architecture** with 7 databases total (2 databases actively documented)
 - **Multi-verification workflow** supporting 4 verification types per applicant
 - **Cross-database foreign keys documented** for fraud_postgresql ↔ enterprise_postgresql integration
+- **Advanced fraud detection** includes repeat applicant identification (frequent flyer detection)
 
 ---
 
@@ -35,14 +36,17 @@ This project provides comprehensive documentation of the Snappt fraud detection 
 | **REVIEW_QUEUE_SYSTEM.md** | 26KB | 6 | Review queue management, audit trails, escalations, priority configuration |
 | **FEATURES_CONFIGURATION.md** | 30KB | 7 | Feature flags, A/B testing, gradual rollouts, global settings |
 | **INTEGRATION_LAYER.md** | 28KB | 6 | Webhook delivery, Yardi PMS integration, retry logic |
+| **DISPUTES_WORKFLOW.md** | 22KB | 3 | Dispute management, categorization, email communication tracking |
+| **FREQUENT_FLYER_DETECTION.md** | 24KB | 2 | Repeat applicant identification with fuzzy matching and confidence scoring |
 | **ENTERPRISE_INTEGRATION_DATABASE.md** | 32KB | 5 | **Cross-database integration** with multi-database query patterns |
 | **ERD_DIAGRAMS.md** | 18KB | 30 | **Visual ERD diagrams** for all documented tables (8 Mermaid diagrams) |
 | **COMPREHENSIVE_SCHEMA_REFERENCE.md** | 28KB | 30 | **Complete column details** for all documented tables |
 | **DATABASE_SCHEMA_SUMMARY.md** | 9.7KB | - | High-level overview of all 7 databases |
+| **SESSION_NOTES.md** | 70KB | - | Working context and learnings for future sessions |
 | **extract_schemas.py** | 1.6KB | - | Schema extraction utility script |
 | **README.md** (this file) | 23KB | - | Project summary and findings |
 
-**Total Documentation:** 270KB across 12 files
+**Total Documentation:** 316KB across 15 files
 
 ### Visual Diagrams
 
@@ -345,6 +349,96 @@ enterprise_property.snappt_property_id → fraud_postgresql.properties.id
 
 ---
 
+### 8. Disputes Workflow (3 Tables) ✅
+
+**Purpose:** Manage challenges to screening results from applicants or property managers
+
+**Workflow:**
+```
+User Identifies Issue → Opens Dispute (categorized) → Email Communication → Investigation → Resolution
+```
+
+**Tables:**
+- disputes - Core dispute records with category and description
+- dispute_categories - Dispute reason lookup (Bank Statement Issue, Income Verification Dispute, etc.)
+- dispute_emails - Email communication audit trail
+
+**Key Features:**
+- **Dispute Categories:**
+  - Application Declined in Error
+  - Bank Statement Issue
+  - Income Verification Dispute
+  - Incorrect or Missing Documents
+  - Name or Info Doesn't Match
+  - Upload or File Error
+  - Other
+- **SLA Tracking:**
+  - opened_at timestamp for response time monitoring
+  - Target: 24-48 hour response
+- **Complete Email Trail:**
+  - All dispute-related emails logged
+  - External email system ID (Postmark, SendGrid)
+  - Bidirectional communication tracking
+- **Analytics:**
+  - Dispute rate by property
+  - Most common dispute categories
+  - Average resolution time
+  - Support team performance metrics
+
+**Common Dispute Scenarios:**
+- Fraud detection false positives (legitimate documents flagged)
+- Income calculation errors (wrong amount extracted)
+- Identity mismatches (name variations, maiden names)
+- Technical upload issues (failed uploads marked incomplete)
+- Policy misapplication (automated rejection that should be approved)
+
+**Documentation:** [DISPUTES_WORKFLOW.md](DISPUTES_WORKFLOW.md)
+
+---
+
+### 9. Frequent Flyer Detection (2 Tables) ✅
+
+**Purpose:** Identify repeat applicants using identity variations to avoid detection
+
+**System:**
+```
+New Applicant → Normalize Identity Data → Fuzzy Match Against Historical Variations → Confidence Scoring → Alert if High Confidence
+```
+
+**Tables:**
+- frequent_flyer_variations - Normalized identity storage (name, email, phone with normalized versions)
+- frequent_flyer_matched_confidences - Match results with confidence scores and field match flags
+
+**Key Features:**
+- **Identity Normalization:**
+  - Names: lowercase, trim whitespace, remove special characters
+  - Email: lowercase, remove dots (Gmail), remove plus addressing
+  - Phone: digits only, no formatting
+- **Fuzzy Matching:**
+  - first_name_matched, last_name_matched, email_matched, phone_matched (boolean flags)
+  - Confidence score: 0-100 based on matched fields
+- **Confidence Thresholds:**
+  - 90-100: Very high confidence (almost certainly same person)
+  - 70-89: High confidence (flag for review)
+  - 50-69: Medium confidence (investigate further)
+  - <50: Low confidence (informational only)
+- **Use Cases:**
+  - Serial fraud applicants (rejected at Property A, try Property B with different email)
+  - Legitimate re-applications (rejected for income, re-applies 6 months later with new job)
+  - Identity theft detection (stolen name with fraudster's contact info)
+  - Professional renters applying to multiple properties
+
+**Match Patterns:**
+- All fields match (100 points) = Same person
+- Name + email match, phone differs (80 points) = Same person, new phone
+- Name + phone match, email differs (70 points) = Same person, new email
+- Name matches only (50 points) = Could be different person, common name
+- Email/phone match, name differs (50-60 points) = SUSPICIOUS - high priority fraud investigation
+
+**Documentation:** [FREQUENT_FLYER_DETECTION.md](FREQUENT_FLYER_DETECTION.md)
+
+---
+
 ## Database Architecture Findings
 
 ### Technology Stack
@@ -510,15 +604,9 @@ review_method ENUM:
 
 ## Remaining Work
 
-### Undocumented Tables (~26 tables remaining)
+### Undocumented Tables (~21 tables remaining)
 
-#### Medium Priority (13 tables)
-
-**Disputes (3 tables):**
-- disputes, dispute_categories, dispute_emails
-
-**Fraud Detection - Advanced (2 tables):**
-- frequent_flyer_variations, frequent_flyer_matched_confidences
+#### Medium Priority (8 tables)
 
 **Supporting Systems (8 tables):**
 - matching_entries
@@ -792,9 +880,12 @@ review_method ENUM:
 - FEATURES_CONFIGURATION.md (7 tables)
 - INTEGRATION_LAYER.md (6 tables)
 - ENTERPRISE_INTEGRATION_DATABASE.md (5 tables, cross-database documentation)
+- DISPUTES_WORKFLOW.md (3 tables)
+- FREQUENT_FLYER_DETECTION.md (2 tables)
+- SESSION_NOTES.md (working context for future sessions)
 
-**Total Time:** ~6-8 hours of focused documentation work
-**Progress:** 65% complete (49 fraud_postgresql + 5 enterprise_postgresql tables)
+**Total Time:** ~8-10 hours of focused documentation work
+**Progress:** 72% complete (54 fraud_postgresql + 5 enterprise_postgresql tables)
 
 ---
 
@@ -806,14 +897,17 @@ review_method ENUM:
 2. ✅ **Features & Configuration** (7 tables) - Feature flags and A/B testing
 3. ✅ **Integration Layer** (6 tables) - Webhooks and Yardi PMS integration
 4. ✅ **Enterprise Integration Database** (5 tables) - Cross-database foreign keys documented
+5. ✅ **Disputes Workflow** (3 tables) - Dispute management and resolution
+6. ✅ **Frequent Flyer Detection** (2 tables) - Repeat applicant identification
+7. ✅ **SESSION_NOTES.md** - Complete context preservation for future sessions
+
+**Session Result:** 72% complete - Exceeded 70% goal! 🎉
 
 ### Remaining Work
 
-#### Option A: Complete Remaining fraud_postgresql Tables (~26 tables)
+#### Option A: Complete Remaining fraud_postgresql Tables (~21 tables)
 
-**Medium Priority (13 tables):**
-- Disputes (3 tables)
-- Fraud Detection - Advanced (2 tables)
+**Medium Priority (8 tables):**
 - Supporting Systems (8 tables)
 
 **Low Priority (13 tables):**
@@ -915,7 +1009,9 @@ review_method ENUM:
 | Review & Queue System | 6 | REVIEW_QUEUE_SYSTEM.md |
 | Features & Configuration | 7 | FEATURES_CONFIGURATION.md |
 | Integration Layer | 6 | INTEGRATION_LAYER.md |
-| **TOTAL fraud_postgresql** | **49** | **6 workflow docs** |
+| Disputes Workflow | 3 | DISPUTES_WORKFLOW.md |
+| Frequent Flyer Detection | 2 | FREQUENT_FLYER_DETECTION.md |
+| **TOTAL fraud_postgresql** | **54** | **8 workflow docs** |
 
 ### Documented Tables (enterprise_postgresql)
 
@@ -928,28 +1024,29 @@ review_method ENUM:
 
 | Database | Business Tables | Infrastructure | Total Documented |
 |----------|----------------|----------------|------------------|
-| fraud_postgresql | 49 | 0 | 49 |
+| fraud_postgresql | 54 | 0 | 54 |
 | enterprise_postgresql | 5 | 2 (not documented) | 5 |
-| **TOTAL** | **54** | **2** | **54** |
+| **TOTAL** | **59** | **2** | **59** |
 
 ### Remaining Tables by Priority
 
 | Priority | Tables | Workflows |
 |----------|--------|-----------|
-| Medium | 13 | Disputes, Frequent Flyer, Supporting |
+| Medium | 8 | Supporting Systems |
 | Low | 13 | User Experience, Infrastructure, Cleanup |
-| **TOTAL REMAINING** | **~26** | **~6 workflows** |
+| **TOTAL REMAINING** | **~21** | **~4 workflows** |
 
 ### Overall Progress
 
 ```
-fraud_postgresql: 49 tables documented / 75 core tables = 65% complete
-enterprise_postgresql: 5 tables documented / 5 business tables = 100% complete
-Combined: 54 tables documented across 2 databases
+fraud_postgresql: 54 tables documented / 75 core tables = 72% complete ✅
+enterprise_postgresql: 5 tables documented / 5 business tables = 100% complete ✅
+Combined: 59 tables documented across 2 databases
 ```
 
-**fraud_postgresql completion:** 60-75 core tables estimated (currently at 49)
-**Remaining work:** ~26 supporting tables in fraud_postgresql
+**fraud_postgresql completion:** 60-75 core tables estimated (currently at 54)
+**Remaining work:** ~21 supporting tables in fraud_postgresql
+**Milestone achieved:** 70% completion goal exceeded!
 
 ---
 
