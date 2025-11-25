@@ -2,7 +2,7 @@
 
 **Generated:** 2025-11-25
 **Database:** fraud_postgresql (Production)
-**Tables Documented:** 6 review and queue management tables
+**Tables Documented:** 7 review and queue management tables
 
 ---
 
@@ -33,6 +33,9 @@ The Review & Queue System is the central workflow management infrastructure that
 ### Escalation & Configuration (2 tables)
 - **entry_review_escalation** - Escalation tracking for complex entries
 - **role_entry_status_sort_priority** - Queue sorting priority by user role
+
+### Reviewer Inbox Views (1 table)
+- **fast_fde_inboxes** - Denormalized reviewer inbox view for fast FDE workflow queries
 
 ---
 
@@ -456,6 +459,112 @@ LIMIT 1;
 
 ---
 
+## 7. FAST_FDE_INBOXES
+
+**Purpose:** Denormalized reviewer inbox view that aggregates folder, entry, applicant, and ruling information for fast Fast FDE (Fraud Document Examination) workflow queries. This table/view optimizes reviewer dashboard performance by precomputing commonly accessed data.
+
+**Primary Key:** None (appears to be a materialized view or denormalized table)
+
+### Columns
+
+| Column | Type | Nullable | Description |
+|--------|------|----------|-------------|
+| folder_id | uuid | YES | Folder UUID |
+| folder_name | varchar(255) | YES | Folder display name |
+| folder_property_short_id | varchar(255) | YES | Property short ID for this folder |
+| folder_property_name | varchar(255) | YES | Property name |
+| folder_company_short_id | varchar(255) | YES | Company short ID |
+| dynamic_ruling | varchar(255) | YES | Most recent ruling status |
+| ruling_time | timestamp | YES | When ruling was made |
+| applicant_full_name | varchar(255) | YES | Applicant name |
+| last_entry_id | uuid | YES | Most recent entry UUID in folder |
+| last_entry_status | varchar(255) | YES | Status of most recent entry |
+| last_entry_result | varchar(255) | YES | Result of most recent entry (CLEAN, FRAUD, etc.) |
+| last_entry_updated_at | timestamp | YES | When entry was last updated |
+| last_entry_submission_time | timestamp | YES | When entry was submitted |
+
+### Relationships
+
+**Implicit References (Denormalized):**
+- folder_id → folders.id
+- last_entry_id → entries.id
+- folder_property_short_id → properties.short_id
+- folder_company_short_id → companies.short_id
+
+### Business Logic
+
+**Purpose:**
+This table serves as a high-performance reviewer inbox view for the Fast FDE workflow, which requires quick access to:
+1. Folder context (property, company)
+2. Latest entry status and result
+3. Applicant information
+4. Ruling timeline
+
+**Denormalization Strategy:**
+Instead of joining 5+ tables (folders → properties → companies → entries → applicants) for every inbox query, this table precomputes and caches the data.
+
+**Fast FDE Workflow:**
+- **Fast FDE** = Fast Fraud Document Examination
+- Streamlined review process for high-volume properties
+- Reviewers need immediate visibility into pending/in-progress entries
+- This view powers the reviewer dashboard
+
+**Typical Use Cases:**
+```sql
+-- Reviewer inbox: Show all pending reviews for Fast FDE
+SELECT *
+FROM fast_fde_inboxes
+WHERE last_entry_status = 'pending_review'
+  AND folder_property_short_id IN (SELECT short_id FROM properties WHERE fast_fde_enabled = true)
+ORDER BY last_entry_submission_time ASC;
+
+-- Company-level dashboard: Show all in-progress entries
+SELECT
+    folder_company_short_id,
+    COUNT(*) as entries_in_review,
+    AVG(EXTRACT(EPOCH FROM (NOW() - last_entry_submission_time))) / 3600 as avg_hours_pending
+FROM fast_fde_inboxes
+WHERE last_entry_status IN ('pending_review', 'in_review')
+GROUP BY folder_company_short_id;
+
+-- Property manager view: Status of all applicants
+SELECT
+    folder_property_name,
+    applicant_full_name,
+    last_entry_result,
+    last_entry_updated_at,
+    dynamic_ruling
+FROM fast_fde_inboxes
+WHERE folder_property_short_id = 'PROP123'
+ORDER BY last_entry_submission_time DESC;
+```
+
+**Refresh Strategy:**
+- Likely updated via database triggers or periodic materialized view refresh
+- Updated when:
+  - Entry status/result changes
+  - New entry created in folder
+  - Applicant information updated
+  - Ruling made by reviewer
+
+**Performance Benefits:**
+- **Without this view:** 5-way join (folders + properties + companies + entries + applicants)
+- **With this view:** Single table query
+- Critical for high-volume Fast FDE properties with hundreds of pending reviews
+
+**Integration with Review Queue:**
+This view complements the review_items queue system:
+- `review_items` tracks the work queue (scheduled, assigned, completed)
+- `fast_fde_inboxes` provides the dashboard view (what reviewers see)
+- Together they power the complete reviewer experience
+
+**Data Freshness:**
+- last_entry_updated_at tracks entry changes
+- ruling_time tracks most recent reviewer action
+- May have slight lag (seconds to minutes) depending on refresh strategy
+
+---
+
 ## Complete Review Workflow Integration
 
 ### Example: Entry Review from Start to Finish
@@ -756,13 +865,14 @@ ORDER BY escalations DESC;
 
 ## Summary
 
-**6 Tables Documented:**
+**7 Tables Documented:**
 - **review_items** - Central queue table for all workflows
 - **reviewer_queue** - Reviewer work requests and assignments
 - **entry_log** - Comprehensive audit trail
 - **entry_report** - Final completion reports
 - **entry_review_escalation** - Complex case escalations
 - **role_entry_status_sort_priority** - Queue priority configuration
+- **fast_fde_inboxes** - Denormalized reviewer inbox view for Fast FDE workflow
 
 **Key Features:**
 - Workflow-agnostic queue system
@@ -772,6 +882,7 @@ ORDER BY escalations DESC;
 - Escalation management
 - Role-based prioritization
 - Performance metrics and KPIs
+- Optimized reviewer dashboard views
 
 **Integration Points:**
 - Entries (core entity)
@@ -797,5 +908,5 @@ ORDER BY escalations DESC;
 
 **Generated:** 2025-11-25
 **Last Updated:** 2025-11-25
-**Version:** 1.0
-**Tables Documented:** 6 of 75 core tables
+**Version:** 1.1
+**Tables Documented:** 7 of 76 core tables

@@ -2,7 +2,7 @@
 
 **Generated:** 2025-11-25
 **Database:** enterprise_postgresql
-**Tables Documented:** 5 enterprise integration tables
+**Tables Documented:** 6 enterprise integration tables
 **Purpose:** Cross-database integration layer for enterprise PMS/CRM systems
 
 ---
@@ -15,6 +15,7 @@ The **enterprise_postgresql** database serves as an integration layer between Sn
 - **Cross-Database Links** - Maps enterprise data to fraud_postgresql entities
 - **Enterprise Applicant Tracking** - Links applicants across systems
 - **Property Integration** - Links properties to external systems
+- **Outbound Integration** - Tracks data sync attempts to external systems
 - **Email Delivery** - Manages transactional email via Postmark
 - **Inbound Webhooks** - Receives events from external systems
 - **Integration Configuration** - Stores enterprise system credentials
@@ -87,6 +88,9 @@ GROUP BY p.id, p.name, p.short_id, ep.id, ep.integration_details,
 ### Cross-Database Integration (2 tables)
 - **enterprise_applicant** - Links external applicants to Snappt applicant_details
 - **enterprise_property** - Links external properties to Snappt properties
+
+### Outbound Integration (1 table)
+- **outbound_integration_attempt_item** - Tracks individual items synced to external systems
 
 ### Communication (2 tables)
 - **email_delivery_attempts** - Transactional email delivery (Postmark)
@@ -299,7 +303,164 @@ GROUP BY p.name, c.name, ep.integration_details,
 
 ---
 
-## 3. EMAIL_DELIVERY_ATTEMPTS
+## 3. OUTBOUND_INTEGRATION_ATTEMPT_ITEM
+
+**Purpose:** Tracks individual items (applicants, properties, documents, etc.) that need to be synced to external enterprise systems during outbound integration attempts. Provides granular tracking of what data is being sent where, with success/failure status for each item.
+
+**Primary Key:** `id` (UUID)
+
+### Columns
+
+| Column | Type | Nullable | Description |
+|--------|------|----------|-------------|
+| id | uuid | NO | Primary key (auto-generated via gen_random_uuid()) |
+| enterprise_applicant_id | uuid | YES | **FK → enterprise_applicant.id** (if item is an applicant) |
+| enterprise_property_id | uuid | NO | **FK → enterprise_property.id** (property being synced to) |
+| integration_type | varchar | NO | Type of integration (yardi, realpage, entrata, etc.) |
+| integration_id | varchar | NO | External system identifier for this item |
+| item_type | varchar | NO | Type of item being synced (applicant, document, status, etc.) |
+| status | varchar | NO | Sync status (pending, success, failed, retrying) |
+| error_message | varchar | YES | Error details if status=failed |
+| created_at | timestamp with time zone | NO | When item was queued for sync (default: CURRENT_TIMESTAMP) |
+
+### Relationships
+- **Belongs to:** enterprise_applicant (via enterprise_applicant_id, nullable)
+- **Belongs to:** enterprise_property (via enterprise_property_id, required)
+- **CROSS-DB (Transitive):** Via enterprise_applicant → fraud_postgresql.applicants
+- **CROSS-DB (Transitive):** Via enterprise_property → fraud_postgresql.properties
+
+### Business Logic
+
+**Outbound Integration Flow:**
+1. Event occurs in Snappt (screening completed, document uploaded, status changed)
+2. System determines which external systems need to be notified
+3. For each integration, creates outbound_integration_attempt_item records
+4. Worker process picks up pending items and syncs to external system
+5. Status updated based on success/failure
+
+**Item Types:**
+- **applicant** - Applicant demographic data
+- **document** - Document file and metadata
+- **status** - Application status change
+- **result** - Screening result (fraud, income, etc.)
+- **notes** - Reviewer notes or comments
+
+**Integration Types:**
+- **yardi** - Yardi Voyager PMS
+- **realpage** - RealPage PMS
+- **entrata** - Entrata PMS
+- **appfolio** - AppFolio property management
+- **buildium** - Buildium property management
+- **custom** - Custom API integrations
+
+**Status Flow:**
+```
+pending → (processing) → success
+            ↓
+        failed → retrying → success
+                    ↓
+                 failed (max retries)
+```
+
+**Example: Applicant Screening Complete - Sync to Yardi**
+```sql
+-- Create outbound sync items when screening completes
+INSERT INTO outbound_integration_attempt_item (
+    enterprise_applicant_id,
+    enterprise_property_id,
+    integration_type,
+    integration_id,
+    item_type,
+    status
+)
+SELECT
+    ea.id,
+    ep.id,
+    'yardi',
+    ea.integration_id, -- External Yardi prospect ID
+    'result',
+    'pending'
+FROM enterprise_applicant ea
+JOIN enterprise_property ep ON ep.snappt_property_id = (
+    SELECT property_id FROM folders WHERE id = (
+        SELECT folder_id FROM entries WHERE id = ea.entry_id
+    )
+)
+WHERE ea.snappt_applicant_detail_id = ?; -- Applicant who just completed
+```
+
+**Query: Integration Health Dashboard**
+```sql
+-- Success/failure rates by integration type
+SELECT
+    integration_type,
+    COUNT(*) as total_items,
+    COUNT(*) FILTER (WHERE status = 'success') as successful,
+    COUNT(*) FILTER (WHERE status = 'failed') as failed,
+    COUNT(*) FILTER (WHERE status = 'pending') as pending,
+    COUNT(*) FILTER (WHERE status = 'retrying') as retrying,
+    ROUND(
+        100.0 * COUNT(*) FILTER (WHERE status = 'success') / COUNT(*),
+        2
+    ) as success_rate_pct
+FROM outbound_integration_attempt_item
+WHERE created_at > NOW() - interval '24 hours'
+GROUP BY integration_type
+ORDER BY total_items DESC;
+```
+
+**Query: Failed Items Needing Attention**
+```sql
+-- Items that failed and need investigation
+SELECT
+    oiai.id,
+    oiai.integration_type,
+    oiai.item_type,
+    oiai.integration_id,
+    oiai.error_message,
+    oiai.created_at,
+    ep.integration_details->>'property_name' as property_name,
+    ea.integration_details->>'applicant_name' as applicant_name
+FROM outbound_integration_attempt_item oiai
+JOIN enterprise_property ep ON oiai.enterprise_property_id = ep.id
+LEFT JOIN enterprise_applicant ea ON oiai.enterprise_applicant_id = ea.id
+WHERE oiai.status = 'failed'
+  AND oiai.created_at > NOW() - interval '7 days'
+ORDER BY oiai.created_at DESC;
+```
+
+**Query: Property Integration Performance**
+```sql
+-- Sync performance per property
+SELECT
+    ep.integration_details->>'property_name' as property_name,
+    COUNT(oiai.id) as total_sync_items,
+    AVG(EXTRACT(EPOCH FROM (oiai.created_at - oiai.created_at))) as avg_sync_time_seconds,
+    COUNT(*) FILTER (WHERE oiai.status = 'failed') as failed_count
+FROM outbound_integration_attempt_item oiai
+JOIN enterprise_property ep ON oiai.enterprise_property_id = ep.id
+WHERE oiai.created_at > NOW() - interval '30 days'
+GROUP BY ep.id, ep.integration_details
+HAVING COUNT(*) FILTER (WHERE oiai.status = 'failed') > 0
+ORDER BY failed_count DESC;
+```
+
+**Retry Logic:**
+- Failed items automatically retry with exponential backoff
+- Max retries typically 3-5 attempts
+- After max retries, status remains 'failed' and alerts are sent
+- Manual requeue possible via admin interface
+
+**Use Cases:**
+1. **Debugging Integration Issues** - Identify specific items that failed to sync
+2. **Performance Monitoring** - Track sync latency and success rates
+3. **Audit Trail** - Know exactly what data was sent to which system and when
+4. **Data Reconciliation** - Compare Snappt data vs external system data
+5. **SLA Compliance** - Ensure screening results delivered within contractual timeframes
+
+---
+
+## 4. EMAIL_DELIVERY_ATTEMPTS
 
 **Purpose:** Tracks transactional email delivery via Postmark API. Audit trail for all system-generated emails.
 
@@ -398,7 +559,7 @@ ORDER BY success_rate ASC;
 
 ---
 
-## 4. INBOUND_WEBHOOKS
+## 5. INBOUND_WEBHOOKS
 
 **Purpose:** Receives and processes webhooks from external systems. Queue for asynchronous webhook processing.
 
@@ -513,7 +674,7 @@ GROUP BY source;
 
 ---
 
-## 5. ENTERPRISE_INTEGRATION_CONFIGURATION
+## 6. ENTERPRISE_INTEGRATION_CONFIGURATION
 
 **Purpose:** Stores enterprise system credentials, endpoints, and configuration. Centralized integration settings.
 
@@ -794,9 +955,10 @@ CREATE INDEX idx_enterprise_property_integration_details_gin
 
 ## Summary
 
-**5 Tables Documented:**
+**6 Tables Documented:**
 - **enterprise_applicant** - Cross-DB link to applicant_details
 - **enterprise_property** - Cross-DB link to properties
+- **outbound_integration_attempt_item** - Outbound sync tracking
 - **email_delivery_attempts** - Postmark email tracking
 - **inbound_webhooks** - External system webhooks
 - **enterprise_integration_configuration** - Integration credentials
@@ -808,6 +970,7 @@ CREATE INDEX idx_enterprise_property_integration_details_gin
 **Key Features:**
 - Cross-database integration layer
 - Enterprise PMS/CRM synchronization
+- Granular outbound sync tracking with success/failure status
 - Transactional email delivery
 - Inbound webhook processing
 - Integration health monitoring
@@ -816,6 +979,8 @@ CREATE INDEX idx_enterprise_property_integration_details_gin
 **Use Cases:**
 - Link external applicants to Snappt screenings
 - Property-level integration configuration
+- Track outbound data sync (applicants, results, documents)
+- Monitor integration success rates and identify failures
 - Status synchronization with external systems
 - Email delivery tracking
 - Webhook event processing
@@ -832,6 +997,6 @@ CREATE INDEX idx_enterprise_property_integration_details_gin
 
 **Generated:** 2025-11-25
 **Last Updated:** 2025-11-25
-**Version:** 1.0
-**Tables Documented:** 5 enterprise integration tables
+**Version:** 1.1
+**Tables Documented:** 6 enterprise integration tables
 **Database:** enterprise_postgresql
