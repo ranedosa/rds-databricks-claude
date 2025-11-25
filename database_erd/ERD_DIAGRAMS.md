@@ -22,6 +22,7 @@ These diagrams use Mermaid syntax, which renders automatically in:
 2. [Fraud Detection Workflow](#2-fraud-detection-workflow-7-tables)
 3. [Verification Workflows](#3-verification-workflows-9-tables)
 4. [Complete Integration Overview](#4-complete-integration-overview-30-tables)
+5. [Comprehensive Schema Reference](#5-comprehensive-schema-reference-all-30-tables)
 
 ---
 
@@ -771,7 +772,543 @@ Each table shows:
 
 ---
 
+## 5. Comprehensive Schema Reference (All 30 Tables)
+
+**Purpose:** Complete detailed view of all 30 documented tables with every column for in-depth reference and understanding.
+
+**Note:** This is a large diagram showing complete schemas. For workflow-focused views, see sections 1-4 above.
+
+### 5.1 Complete Database Schema - Part 1: Core Entities & Users
+
+```mermaid
+erDiagram
+    %% Core Entity Hierarchy
+    companies ||--o{ properties : "manages"
+    companies ||--o{ users : "employs"
+    companies ||--o{ folders : "owns"
+    properties ||--o{ folders : "contains"
+    folders ||--o{ entries : "groups"
+    entries ||--o{ applicants : "screens"
+    applicants ||--o{ applicant_submissions : "submits"
+    applicants }o--o| applicant_details : "has_details"
+
+    %% Access Control
+    properties ||--o{ users_properties : "grants_access"
+    users ||--o{ users_properties : "has_access"
+    owners ||--o{ property_owners : "owns"
+    properties ||--o{ property_owners : "owned_by"
+    users ||--o{ users_owners : "manages"
+    owners ||--o{ users_owners : "managed_by"
+    users }o--|| companies : "works_for"
+    users }o--|| team : "belongs_to"
+    team }o--o| users : "managed_by"
+
+    companies {
+        uuid id PK
+        varchar name
+        varchar address
+        varchar city
+        varchar state
+        varchar zip
+        varchar phone
+        varchar website
+        varchar logo
+        varchar short_id
+        varchar salesforce_account_id
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    properties {
+        uuid id PK
+        varchar name
+        varchar entity_name
+        varchar address
+        varchar city
+        varchar state
+        varchar zip
+        varchar phone
+        varchar email
+        varchar website
+        varchar logo
+        varchar short_id
+        integer unit
+        uuid company_id FK
+        varchar company_short_id
+        varchar pmc_name
+        varchar status
+        varchar sfdc_id
+        integer bank_statement
+        integer paystub
+        jsonb supported_doctypes
+        boolean unit_is_required
+        boolean phone_is_required
+        boolean identity_verification_enabled
+        varchar identity_verification_provider
+        jsonb identity_verification_flow_types
+        jsonb identity_verification_report_image_types
+        tsvector textsearchable_index_col
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    folders {
+        uuid id PK
+        varchar name
+        varchar status
+        varchar result
+        varchar dynamic_ruling
+        timestamp ruling_time
+        uuid property_id FK
+        uuid company_id FK
+        varchar property_short_id
+        varchar property_name
+        varchar company_short_id
+        uuid last_entry_id FK
+        timestamp last_entry_submission_time
+        varchar last_entry_result
+        varchar last_entry_status
+        uuid review_assigned_to_id FK
+        timestamp review_assigned_date
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    entries {
+        uuid id PK
+        varchar short_id
+        varchar status
+        varchar result
+        enum suggested_ruling
+        text note
+        varchar unit
+        jsonb metadata
+        uuid folder_id FK
+        timestamp submission_time
+        timestamp report_complete_time
+        varchar notification_email
+        boolean has_previously_submitted
+        boolean auto_merged
+        boolean is_automatic_review
+        varchar review_status
+        timestamp review_date
+        timestamp review_assigned_date
+        uuid reviewer_id FK
+        uuid review_assigned_to_id FK
+        timestamp primary_notification_sent_at
+        timestamp secondary_notification_sent_at
+        timestamp twenty_two_hours_notification_sent_at
+        timestamp sixteen_hours_notification_sent_at
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    applicants {
+        uuid id PK
+        varchar full_name
+        varchar first_name
+        varchar middle_initial
+        varchar last_name
+        varchar email
+        varchar phone
+        boolean notification
+        uuid entry_id FK
+        uuid applicant_detail_id FK
+        uuid identity_id
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    applicant_details {
+        uuid id PK
+        jsonb prefilled_application_data
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    applicant_submissions {
+        uuid id PK
+        uuid applicant_id FK
+        timestamp submitted_time
+        uuid identity_id
+        boolean should_notify_applicant
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    owners {
+        uuid id PK
+        varchar name
+        varchar address
+        varchar city
+        varchar state
+        varchar zip
+        varchar phone
+        varchar website
+        varchar salesforce_id
+        varchar status
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    property_owners {
+        uuid id PK
+        uuid property_id FK
+        uuid owner_id FK
+        timestamp ownership_start
+        timestamp ownership_end
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    users {
+        uuid id PK
+        uuid auth_id
+        varchar short_id
+        varchar first_name
+        varchar last_name
+        varchar email
+        varchar role
+        uuid company_id FK
+        uuid team_id FK
+        boolean settings_notification
+        boolean is_archived
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    team {
+        uuid id PK
+        varchar name
+        varchar timezone
+        integer country_id FK
+        uuid fde_manager_id FK
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    role {
+        bigint id PK
+        varchar name
+    }
+
+    users_properties {
+        bigint id PK
+        uuid user_id FK
+        uuid property_id FK
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    users_owners {
+        uuid owner_id FK_PK
+        uuid user_id FK_PK
+        timestamp inserted_at
+        timestamp updated_at
+    }
+```
+
+### 5.2 Complete Database Schema - Part 2: Fraud Detection & Document Management
+
+```mermaid
+erDiagram
+    %% Document Flow
+    entries ||--o{ proof : "uploads"
+    applicant_submissions ||--o{ applicant_submission_document_sources : "contains"
+    applicant_submission_document_sources ||--o{ fraud_submissions : "triggers"
+    fraud_submissions ||--o{ fraud_reviews : "requires_review"
+    fraud_reviews ||--o{ fraud_document_reviews : "reviews"
+    fraud_reviews }o--|| users : "assigned_to"
+    fraud_reviews }o--|| fraud_result_types : "has_result"
+    fraud_document_reviews }o--|| fraud_result_types : "has_result"
+    applicant_submissions ||--o{ fraud_results : "determines"
+    fraud_results }o--|| fraud_result_types : "has_result"
+
+    proof {
+        uuid id PK
+        uuid entry_id FK
+        varchar short_id
+        text file
+        text thumb
+        enum type
+        enum result
+        enum suggested_ruling
+        varchar automatic_ruling_result
+        text note
+        jsonb extracted_meta
+        jsonb test_extracted_meta
+        array meta_data_flags
+        jsonb test_meta_data_flags
+        enum test_suggested_ruling
+        jsonb text_breakups
+        varchar text_breakups_file
+        array similarity_check
+        boolean has_text
+        boolean has_password_protection
+        boolean has_exceeded_page_limit
+        array jobs_error
+        array result_edited_reason
+        varchar result_insufficient_reason
+        varchar result_clean_proceed_with_caution_reason
+        boolean is_automatic_review
+        boolean manual_review_recommended
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    applicant_submission_document_sources {
+        uuid id PK
+        uuid applicant_submission_id FK
+        varchar source_type
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    fraud_submissions {
+        uuid id PK
+        uuid applicant_submission_document_source_id
+        timestamp inserted_at
+    }
+
+    fraud_reviews {
+        uuid id PK
+        uuid fraud_submission_id FK
+        uuid reviewer_id FK
+        varchar fraud_type
+        varchar status
+        integer result FK
+        varchar result_reason
+        varchar review_type
+        timestamp assigned_date
+        timestamp completed_date
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    fraud_document_reviews {
+        uuid id PK
+        uuid fraud_review_id FK
+        uuid document_id
+        integer result FK
+        varchar source_type
+        timestamp inserted_at
+    }
+
+    fraud_results {
+        bigint id PK
+        uuid applicant_submission_id FK
+        integer result FK
+        timestamp inserted_at
+    }
+
+    fraud_result_types {
+        bigint id PK
+        varchar code
+    }
+```
+
+### 5.3 Complete Database Schema - Part 3: Verification Workflows
+
+```mermaid
+erDiagram
+    %% Income Verification
+    entries ||--o{ income_verification_submissions : "initiates"
+    applicant_submission_document_sources ||--o{ income_verification_submissions : "sources"
+    income_verification_submissions ||--o{ income_verification_reviews : "requires_review"
+    income_verification_reviews }o--|| users : "assigned_to"
+    applicant_submissions ||--o{ income_verification_results : "determines"
+
+    %% Asset Verification
+    entries ||--o{ asset_verification_submissions : "initiates"
+    applicant_submission_document_sources ||--o{ asset_verification_submissions : "sources"
+    asset_verification_submissions ||--o{ asset_verification_reviews : "requires_review"
+    asset_verification_reviews }o--|| users : "assigned_to"
+    applicant_submissions ||--o{ asset_verification_results : "determines"
+
+    %% Identity Verification
+    properties ||--o{ id_verifications : "initiates"
+    companies ||--o{ id_verifications : "initiates"
+
+    %% Rent Verification
+    applicants ||--o{ rent_verifications : "checks"
+    properties ||--o{ rent_verifications : "requires"
+    rent_verifications ||--o{ rent_verification_events : "logs"
+
+    income_verification_submissions {
+        uuid id PK
+        uuid entry_id FK
+        uuid applicant_submission_document_source_id FK
+        varchar review_eligibility
+        varchar rejection_reason
+        timestamp inserted_at
+    }
+
+    income_verification_reviews {
+        uuid id PK
+        uuid income_verification_submission_id FK
+        uuid reviewer_id FK
+        varchar status
+        varchar type
+        enum review_method
+        uuid calculation_id
+        varchar rejection_reason
+        timestamp assigned_date
+        timestamp completed_date
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    income_verification_results {
+        bigint id PK
+        uuid applicant_submission_id FK
+        uuid calculation_id
+        varchar review_eligibility
+        array rejected_reasons
+        varchar type
+        timestamp inserted_at
+    }
+
+    asset_verification_submissions {
+        uuid id PK
+        uuid entry_id FK
+        uuid applicant_submission_document_source_id FK
+        varchar review_eligibility
+        varchar rejection_reason
+        timestamp inserted_at
+    }
+
+    asset_verification_reviews {
+        uuid id PK
+        uuid asset_verification_submission_id FK
+        uuid reviewer_id FK
+        varchar status
+        varchar type
+        enum review_method
+        uuid calculation_id
+        varchar rejection_reason
+        timestamp assigned_date
+        timestamp completed_date
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    asset_verification_results {
+        bigint id PK
+        uuid applicant_submission_id FK
+        uuid calculation_id
+        varchar review_eligibility
+        array rejected_reasons
+        timestamp inserted_at
+    }
+
+    id_verifications {
+        uuid id PK
+        text first_name
+        text last_name
+        text name
+        text email
+        text status
+        text score
+        text score_reason
+        uuid property_id FK
+        uuid company_id FK
+        uuid applicant_detail_id
+        text provider
+        jsonb provider_session_info
+        jsonb provider_results
+        text incode_id
+        text incode_token
+        text incode_url
+        jsonb incode_results
+        timestamp results_provided_at
+        jsonb metadata
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    rent_verifications {
+        uuid id PK
+        uuid applicant_id FK
+        uuid property_id FK
+        varchar provider
+        text external_id
+        varchar status
+        text report_url
+        jsonb request_payload
+        jsonb provider_data
+        timestamp inserted_at
+        timestamp updated_at
+    }
+
+    rent_verification_events {
+        uuid id PK
+        uuid rent_verification_id FK
+        text event_type
+        jsonb event_data
+        timestamp inserted_at
+        timestamp updated_at
+    }
+```
+
+---
+
+## Usage Guide for Comprehensive Schema
+
+### Section 5.1 - Core Entities & Users
+**Use this for:**
+- Understanding organizational hierarchy (companies → properties → folders → entries)
+- User access control patterns
+- Property and company management
+- Applicant data structures
+
+**Key tables:** companies, properties, folders, entries, applicants, users, team
+
+### Section 5.2 - Fraud Detection & Document Management
+**Use this for:**
+- Document upload and storage
+- ML/AI fraud analysis
+- Human review workflow
+- Fraud determination logic
+
+**Key tables:** proof, fraud_submissions, fraud_reviews, fraud_results
+
+### Section 5.3 - Verification Workflows
+**Use this for:**
+- Income verification process
+- Asset verification process
+- Identity verification (third-party)
+- Rent verification (third-party)
+
+**Key tables:** income/asset verification tables, id_verifications, rent_verifications
+
+### Key Features of This Reference
+
+1. **Complete Column Listing** - Every column in every table with data types
+2. **All Relationships** - Foreign keys and implicit relationships shown
+3. **Detailed Types** - Includes enums, arrays, jsonb, timestamps
+4. **Primary Keys** - Clearly marked with PK
+5. **Foreign Keys** - Clearly marked with FK
+6. **Composite Keys** - Marked with FK_PK for users_owners
+
+### When to Use This vs Workflow Diagrams
+
+**Use Comprehensive Schema (Section 5) when:**
+- Implementing new features requiring complete schema knowledge
+- Writing complex queries across multiple tables
+- Performing schema migrations
+- Debugging data integrity issues
+- Creating new integrations
+
+**Use Workflow Diagrams (Sections 1-4) when:**
+- Understanding business logic flow
+- Onboarding new team members
+- Planning new features
+- Explaining system architecture to stakeholders
+- Quick reference for specific workflows
+
+---
+
 **Generated:** 2025-11-25
 **Last Updated:** 2025-11-25
-**Version:** 1.0
+**Version:** 1.1
 **Tables Visualized:** 30 of 75 core tables (40% complete)
