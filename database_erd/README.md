@@ -1,10 +1,10 @@
 # Database ERD Documentation - Project Summary
 
 **Project:** Snappt Fraud Detection Database Entity-Relationship Documentation
-**Database:** fraud_postgresql (Production)
+**Databases:** fraud_postgresql (Production), enterprise_postgresql (Integration Layer)
 **Started:** 2025-11-19
 **Last Updated:** 2025-11-25
-**Status:** 40% Complete (30 of ~75 core tables documented)
+**Status:** 65% Complete (49 of ~75 core tables documented + 5 enterprise tables)
 
 ---
 
@@ -15,9 +15,11 @@ This project provides comprehensive documentation of the Snappt fraud detection 
 **Key Findings:**
 - **104 active tables** in fraud_postgresql database (excluding deleted/backup tables)
 - **~75 core business tables** (after excluding audit/infrastructure tables)
-- **30 tables fully documented** with complete schema details, relationships, and business logic
-- **Microservices architecture** with 7 databases total (only fraud_postgresql actively documented)
+- **49 fraud_postgresql tables fully documented** with complete schema details, relationships, and business logic
+- **5 enterprise_postgresql tables documented** with cross-database relationships for multi-database queries
+- **Microservices architecture** with 7 databases total (2 databases actively documented)
 - **Multi-verification workflow** supporting 4 verification types per applicant
+- **Cross-database foreign keys documented** for fraud_postgresql ↔ enterprise_postgresql integration
 
 ---
 
@@ -30,12 +32,17 @@ This project provides comprehensive documentation of the Snappt fraud detection 
 | **CORE_ENTITY_MODEL.md** | 24KB | 14 | Foundation entities: applicants, properties, companies, users, access control |
 | **FRAUD_DETECTION_WORKFLOW.md** | 24KB | 7 | Document fraud detection with ML/AI analysis and human review |
 | **VERIFICATION_WORKFLOWS.md** | 26KB | 9 | Income, asset, identity, and rent verification workflows |
+| **REVIEW_QUEUE_SYSTEM.md** | 26KB | 6 | Review queue management, audit trails, escalations, priority configuration |
+| **FEATURES_CONFIGURATION.md** | 30KB | 7 | Feature flags, A/B testing, gradual rollouts, global settings |
+| **INTEGRATION_LAYER.md** | 28KB | 6 | Webhook delivery, Yardi PMS integration, retry logic |
+| **ENTERPRISE_INTEGRATION_DATABASE.md** | 32KB | 5 | **Cross-database integration** with multi-database query patterns |
 | **ERD_DIAGRAMS.md** | 18KB | 30 | **Visual ERD diagrams** for all documented tables (8 Mermaid diagrams) |
+| **COMPREHENSIVE_SCHEMA_REFERENCE.md** | 28KB | 30 | **Complete column details** for all documented tables |
 | **DATABASE_SCHEMA_SUMMARY.md** | 9.7KB | - | High-level overview of all 7 databases |
 | **extract_schemas.py** | 1.6KB | - | Schema extraction utility script |
 | **README.md** (this file) | 23KB | - | Project summary and findings |
 
-**Total Documentation:** 126KB across 7 files
+**Total Documentation:** 270KB across 12 files
 
 ### Visual Diagrams
 
@@ -177,6 +184,164 @@ Document Upload → ML/AI Analysis → Routing Decision → Human Review (if nee
 - **Event sourcing:** rent_verification_events provides audit trail
 
 **Documentation:** [VERIFICATION_WORKFLOWS.md](VERIFICATION_WORKFLOWS.md)
+
+---
+
+### 4. Review & Queue System (6 Tables) ✅
+
+**Purpose:** Central workflow management infrastructure that routes reviews to human reviewers
+
+**Workflow:**
+```
+Review Item Created → Queue Item Scheduled → Reviewer Requests Work → Assignment → Review Completed
+```
+
+**Tables:**
+- **Queue Management (2):** review_items, reviewer_queue
+- **Audit & Reporting (2):** entry_log, entry_report
+- **Escalation & Configuration (2):** entry_review_escalation, role_entry_status_sort_priority
+
+**Key Features:**
+- **Workflow-Agnostic Design:**
+  - Supports entry reviews, fraud reviews, income/asset verification reviews
+  - Polymorphic entity_id links to different tables per workflow
+- **Pull-Based Assignment:**
+  - Reviewers request work (not pushed to them)
+  - Workload balancing across reviewer teams
+  - No double-assignment via database locks
+- **State Machine:**
+  - scheduled → assigned → completed
+  - SLA tracking: assignable_at, assigned_at, completed_at
+- **Audit Trail:**
+  - entry_log records all state changes and reviewer actions
+  - Complete forensic analysis capability
+- **Escalation Management:**
+  - Complex cases escalated to senior reviewers
+  - Escalation reasons: complex_case, quality_check, dispute
+- **Role-Based Prioritization:**
+  - Different roles see different queue priorities
+  - Configurable without code changes
+
+**Documentation:** [REVIEW_QUEUE_SYSTEM.md](REVIEW_QUEUE_SYSTEM.md)
+
+---
+
+### 5. Features & Configuration (7 Tables) ✅
+
+**Purpose:** Feature flag management, A/B testing, and system-wide configuration
+
+**Architecture:**
+```
+features (Master List) → property_features (Property Enablement) → property_feature_events (Change History)
+                      → user_features (User Access)
+```
+
+**Tables:**
+- **Feature Management (4):** features, property_features, user_features, property_feature_events
+- **Configuration & Reference (3):** settings, country, whitelist_info
+
+**Key Features:**
+- **Feature Flags:**
+  - Property-level feature enablement (enable identity_verification for Property X)
+  - User-level feature access (beta features for specific users)
+  - Feature states: enabled, disabled, testing
+- **Gradual Rollout:**
+  - Deploy features to 10% of properties for testing
+  - Expand to 50% for A/B testing
+  - Full deployment to 100% when validated
+- **A/B Testing:**
+  - Split properties into control vs treatment groups
+  - Compare metrics (review time, approval rate, etc.)
+  - Data-driven feature decisions
+- **Event Audit Trail:**
+  - property_feature_events logs all feature changes
+  - Track feature adoption timeline
+  - Analyze feature churn
+- **Global Settings:**
+  - System-wide toggles (maintenance_mode, auto_fraud_detection)
+  - Feature kill switches for emergencies
+- **Fraud Detection Optimization:**
+  - whitelist_info reduces false positives
+  - Known-good PDF producers, fonts, text patterns
+
+**Documentation:** [FEATURES_CONFIGURATION.md](FEATURES_CONFIGURATION.md)
+
+---
+
+### 6. Integration Layer (6 Tables) ✅
+
+**Purpose:** External system communication for result delivery and PMS integration
+
+**Workflows:**
+```
+Outbound: Entry Completed → Webhook Delivery → Customer System (with retry logic)
+Inbound:  Yardi PMS → Poll for Prospects → Create Snappt Entries → Send Results Back
+```
+
+**Tables:**
+- **Webhook System (2):** webhooks, webhook_delivery_attempts
+- **Yardi PMS Integration (4):** yardi_integrations, yardi_properties, yardi_entries, yardi_invites
+
+**Key Features:**
+- **Webhook Result Delivery:**
+  - Event-based triggering (entry.completed, fraud.detected, etc.)
+  - Custom headers for authentication
+  - Response tracking and retry logic
+  - HTTP status interpretation (2xx = success, 5xx = retry)
+- **Retry Logic:**
+  - Exponential backoff (1min → 5min → 15min → 1hr)
+  - Maximum retry attempts
+  - Failed delivery alerts
+- **Yardi Voyager Integration:**
+  - SOAP API connection (wsdl_url, soap_endpoint)
+  - Poll-based prospect import (every N minutes)
+  - Bidirectional sync (import prospects, export results)
+  - Property-level integration configuration
+- **Integration Health Monitoring:**
+  - last_poll_run, integration_last_error tracking
+  - Webhook success rate monitoring
+  - SLA compliance tracking
+
+**Documentation:** [INTEGRATION_LAYER.md](INTEGRATION_LAYER.md)
+
+---
+
+### 7. Enterprise Integration Database (5 Tables) ✅
+
+**Purpose:** Cross-database integration layer for enterprise PMS/CRM systems
+
+**Database:** enterprise_postgresql (separate database)
+
+**🔗 Critical Cross-Database Foreign Keys:**
+```
+enterprise_applicant.snappt_applicant_detail_id → fraud_postgresql.applicant_details.id
+enterprise_property.snappt_property_id → fraud_postgresql.properties.id
+```
+
+**Tables:**
+- **Cross-Database Links (2):** enterprise_applicant, enterprise_property
+- **Communication (2):** email_delivery_attempts, inbound_webhooks
+- **Configuration (1):** enterprise_integration_configuration
+
+**Key Features:**
+- **Multi-Database Queries:**
+  - Complete applicant journey across databases
+  - Property integration health monitoring
+  - Integration performance metrics
+- **Email Delivery Tracking:**
+  - Postmark transactional email service
+  - Email types: invite, result, reminder, alert
+  - Success/failure rate monitoring
+- **Inbound Webhook Processing:**
+  - Receives webhooks from Yardi, RealPage, Postmark
+  - Queue for asynchronous processing
+  - Processing status and error tracking
+- **Enterprise System Integration:**
+  - Supports Yardi, RealPage, Entrata, AppFolio, Buildium
+  - JSONB configuration storage
+  - Property-level activation/deactivation
+
+**Documentation:** [ENTERPRISE_INTEGRATION_DATABASE.md](ENTERPRISE_INTEGRATION_DATABASE.md)
 
 ---
 
@@ -345,23 +510,7 @@ review_method ENUM:
 
 ## Remaining Work
 
-### Undocumented Tables (~45 tables remaining)
-
-#### High Priority (19 tables)
-
-**Review & Queue System (6 tables):**
-- review_items, reviewer_queue
-- entry_log, entry_report
-- entry_review_escalation
-- role_entry_status_sort_priority
-
-**Features & Configuration (7 tables):**
-- features, property_features, user_features, property_feature_events
-- settings, country, whitelist_info
-
-**Integrations (6 tables):**
-- webhooks, webhook_delivery_attempts
-- yardi_integrations, yardi_properties, yardi_entries, yardi_invites
+### Undocumented Tables (~26 tables remaining)
 
 #### Medium Priority (13 tables)
 
@@ -400,18 +549,20 @@ review_method ENUM:
 
 ---
 
-## Other Databases (Not Yet Documented)
+## Other Databases
 
-### enterprise_postgresql (6 tables)
-**Priority:** Medium - Important for cross-database integration
+### enterprise_postgresql (5 business tables documented) ✅
+**Status:** Documented - Cross-database integration layer complete
 
-**Tables:**
-- email_delivery_attempts
-- enterprise_applicant (links to fraud DB)
-- enterprise_property (links to fraud DB)
-- enterprise_integration_configuration
-- inbound_webhooks
-- migrations, typeorm_metadata
+**Documented Tables:**
+- ✅ email_delivery_attempts (Postmark transactional email)
+- ✅ enterprise_applicant (cross-DB link to fraud_postgresql.applicant_details)
+- ✅ enterprise_property (cross-DB link to fraud_postgresql.properties)
+- ✅ enterprise_integration_configuration (PMS/CRM credentials)
+- ✅ inbound_webhooks (external system events)
+
+**Infrastructure Tables (not business-critical):**
+- migrations, typeorm_metadata (TypeORM framework tables)
 
 ### dp_ai_services (2 tables)
 **Priority:** Low - Analytics/monitoring only
@@ -628,58 +779,73 @@ review_method ENUM:
 - Project initiated
 - DATABASE_SCHEMA_SUMMARY.md created (high-level overview of 7 databases)
 
-**2025-11-25:**
+**2025-11-25 (Session 1):**
 - CORE_ENTITY_MODEL.md (14 tables)
 - FRAUD_DETECTION_WORKFLOW.md (7 tables)
 - VERIFICATION_WORKFLOWS.md (9 tables)
-- ERD_DIAGRAMS.md (8 visual diagrams for all 30 tables)
-- README.md (this summary)
+- ERD_DIAGRAMS.md (8 visual diagrams for 30 tables)
+- COMPREHENSIVE_SCHEMA_REFERENCE.md (complete column details)
+- README.md (project summary)
 
-**Total Time:** ~3-4 hours of focused documentation work
+**2025-11-25 (Session 2):**
+- REVIEW_QUEUE_SYSTEM.md (6 tables)
+- FEATURES_CONFIGURATION.md (7 tables)
+- INTEGRATION_LAYER.md (6 tables)
+- ENTERPRISE_INTEGRATION_DATABASE.md (5 tables, cross-database documentation)
+
+**Total Time:** ~6-8 hours of focused documentation work
+**Progress:** 65% complete (49 fraud_postgresql + 5 enterprise_postgresql tables)
 
 ---
 
 ## Next Steps
 
-### Immediate Priorities
+### Completed in This Session ✅
 
-1. **Complete Review & Queue System** (6 tables)
-   - How entries flow through review queues
-   - Reviewer assignment logic
-   - Entry log audit trail
+1. ✅ **Review & Queue System** (6 tables) - Workflow management infrastructure
+2. ✅ **Features & Configuration** (7 tables) - Feature flags and A/B testing
+3. ✅ **Integration Layer** (6 tables) - Webhooks and Yardi PMS integration
+4. ✅ **Enterprise Integration Database** (5 tables) - Cross-database foreign keys documented
 
-2. **Document Features & Configuration** (7 tables)
-   - Feature flag system
-   - Property-level feature enablement
-   - User-level feature access
+### Remaining Work
 
-3. **Document Integration Layer** (6 tables)
-   - Webhook system
-   - Yardi integration
-   - Webhook delivery and retry logic
+#### Option A: Complete Remaining fraud_postgresql Tables (~26 tables)
 
-### Medium-term Goals
+**Medium Priority (13 tables):**
+- Disputes (3 tables)
+- Fraud Detection - Advanced (2 tables)
+- Supporting Systems (8 tables)
 
-4. **Document enterprise_postgresql** (6 tables)
-   - Cross-database integration details
-   - Enterprise applicant/property links
+**Low Priority (13 tables):**
+- User Experience (5 tables)
+- Document Processing (1 table)
+- Infrastructure (2 tables)
+- Cleanup/Backup (5 tables)
 
-5. **Complete Remaining Tables** (~20 supporting tables)
-   - Disputes, announcements, frequent flyer detection
-   - Background jobs, invitations
+#### Option B: Document Other Databases
 
-### Long-term Goals
+**dp_income_validation, dp_document_intelligence, dp_inception_fraud:**
+- Investigate schema (may be in non-public schemas or unused)
 
-6. **Generate Interactive Schema Explorer**
+**dp_ai_services:**
+- AI agent execution metrics (low priority)
+
+#### Option C: Enhancement Projects
+
+1. **Update Visual ERD Diagrams**
+   - Add new workflows to ERD_DIAGRAMS.md
+   - Create diagrams for Review & Queue, Features, Integration Layer
+
+2. **Generate Interactive Schema Explorer**
    - Web-based schema browser
    - Clickable table relationships
    - Search across all tables
 
-7. **API Documentation Integration**
+3. **API Documentation Integration**
    - Link database schema to API endpoints
    - Show which endpoints modify which tables
 
-8. **Data Dictionary**
+4. **Data Dictionary**
    - Standardized field definitions
    - Business glossary
    - Column naming conventions
@@ -736,7 +902,7 @@ review_method ENUM:
 
 ## Appendix: Table Count Summary
 
-### Documented Tables by Workflow
+### Documented Tables by Workflow (fraud_postgresql)
 
 | Workflow | Tables | Files |
 |----------|--------|-------|
@@ -746,24 +912,44 @@ review_method ENUM:
 | Asset Verification | 3 | VERIFICATION_WORKFLOWS.md |
 | Identity Verification | 1 | VERIFICATION_WORKFLOWS.md |
 | Rent Verification | 2 | VERIFICATION_WORKFLOWS.md |
-| **TOTAL DOCUMENTED** | **30** | **3 workflow docs** |
+| Review & Queue System | 6 | REVIEW_QUEUE_SYSTEM.md |
+| Features & Configuration | 7 | FEATURES_CONFIGURATION.md |
+| Integration Layer | 6 | INTEGRATION_LAYER.md |
+| **TOTAL fraud_postgresql** | **49** | **6 workflow docs** |
+
+### Documented Tables (enterprise_postgresql)
+
+| Workflow | Tables | Files |
+|----------|--------|-------|
+| Enterprise Integration | 5 | ENTERPRISE_INTEGRATION_DATABASE.md |
+| **TOTAL enterprise_postgresql** | **5** | **1 workflow doc** |
+
+### Combined Documentation
+
+| Database | Business Tables | Infrastructure | Total Documented |
+|----------|----------------|----------------|------------------|
+| fraud_postgresql | 49 | 0 | 49 |
+| enterprise_postgresql | 5 | 2 (not documented) | 5 |
+| **TOTAL** | **54** | **2** | **54** |
 
 ### Remaining Tables by Priority
 
 | Priority | Tables | Workflows |
 |----------|--------|-----------|
-| High | 19 | Review/Queue, Features, Integrations |
 | Medium | 13 | Disputes, Frequent Flyer, Supporting |
 | Low | 13 | User Experience, Infrastructure, Cleanup |
-| **TOTAL REMAINING** | **~45** | **~9 workflows** |
+| **TOTAL REMAINING** | **~26** | **~6 workflows** |
 
 ### Overall Progress
 
 ```
-30 tables documented / 75 core tables = 40% complete
+fraud_postgresql: 49 tables documented / 75 core tables = 65% complete
+enterprise_postgresql: 5 tables documented / 5 business tables = 100% complete
+Combined: 54 tables documented across 2 databases
 ```
 
-**Estimated completion:** 60-75 core tables (excluding deleted/backup/audit tables)
+**fraud_postgresql completion:** 60-75 core tables estimated (currently at 49)
+**Remaining work:** ~26 supporting tables in fraud_postgresql
 
 ---
 
