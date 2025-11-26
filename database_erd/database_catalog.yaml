@@ -1,0 +1,3628 @@
+# Database Catalog - Snappt Fraud Detection Platform
+# Generated: 2025-11-25
+# Version: 1.0
+# Total Databases: 6
+# Total Tables: 112
+# Documentation Status: 100% Complete
+
+catalogs:
+  # =============================================================================
+  # FRAUD_POSTGRESQL - Core Production Database
+  # =============================================================================
+  - name: fraud_postgresql
+    description: |
+      Core fraud detection and verification platform database. Contains all primary
+      business logic for fraud detection, income verification, asset verification,
+      identity checks, and rent verification. Supports multi-tenant architecture
+      with companies and properties. Includes comprehensive workflow management,
+      review queues, integrations, and audit trails.
+
+    table_count: 76
+    primary_technology: Elixir/Phoenix with Ecto ORM
+    schemas:
+      - name: public
+        description: Main application schema containing all business tables
+        tables:
+          # =========================================================================
+          # CORE ENTITY MODEL (14 tables)
+          # =========================================================================
+          - name: applicants
+            description: |
+              Core applicant information for individuals being screened. Stores contact
+              details and links to application data. Each applicant belongs to an entry
+              (screening case) and may have multiple submissions.
+            row_estimate: 500000+
+            primary_key: id
+            foreign_keys:
+              - column: entry_id
+                references: entries(id)
+              - column: applicant_detail_id
+                references: applicant_details(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key - unique identifier for applicant
+              - name: full_name
+                type: varchar(255)
+                nullable: true
+                comment: Complete name of applicant
+              - name: first_name
+                type: varchar(255)
+                nullable: true
+                comment: First name - alternative to full_name
+              - name: middle_initial
+                type: varchar(255)
+                nullable: true
+                comment: Middle initial or middle name
+              - name: last_name
+                type: varchar(255)
+                nullable: true
+                comment: Last name - alternative to full_name
+              - name: email
+                type: varchar(255)
+                nullable: true
+                comment: Email address for applicant notifications
+              - name: phone
+                type: varchar(255)
+                nullable: true
+                comment: Contact phone number
+              - name: notification
+                type: boolean
+                nullable: false
+                default: false
+                comment: Whether to send email notifications to applicant
+              - name: entry_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to entries - the screening case
+              - name: applicant_detail_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to applicant_details - prefilled application data
+              - name: identity_id
+                type: uuid
+                nullable: true
+                comment: Identity verification session ID (may link to id_verifications)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: applicant_details
+            description: |
+              Additional applicant information typically prefilled from external systems.
+              Uses JSONB for flexible schema to accommodate various data sources.
+            row_estimate: 500000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: prefilled_application_data
+                type: jsonb
+                nullable: true
+                comment: Flexible JSON storage for application data from integrations
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: applicant_submissions
+            description: |
+              Tracks submission events when applicants upload documents or complete
+              verification steps. Each submission represents a document batch upload.
+            row_estimate: 1000000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicants
+              - name: submitted_time
+                type: timestamp
+                nullable: false
+                comment: When documents were submitted
+              - name: identity_id
+                type: uuid
+                nullable: true
+                comment: Identity verification session ID
+              - name: should_notify_applicant
+                type: boolean
+                nullable: false
+                default: true
+                comment: Whether to send submission confirmation email
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: companies
+            description: |
+              Property management companies. Top level of the organizational hierarchy.
+              Each company can have multiple properties and users.
+            row_estimate: 5000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Company name
+              - name: short_id
+                type: varchar(255)
+                nullable: true
+                comment: Human-readable identifier for company
+              - name: salesforce_id
+                type: varchar(255)
+                nullable: true
+                comment: Salesforce Account ID for integration
+              - name: settings
+                type: jsonb
+                nullable: true
+                comment: Company-level configuration and preferences
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: properties
+            description: |
+              Individual properties (apartment buildings, complexes, communities).
+              Belongs to a company. Has many entries, folders, and users. Central
+              entity that connects most workflows.
+            row_estimate: 50000+
+            primary_key: id
+            foreign_keys:
+              - column: company_id
+                references: companies(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: company_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to companies
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Property name
+              - name: address_street
+                type: varchar(255)
+                nullable: true
+                comment: Street address
+              - name: address_city
+                type: varchar(255)
+                nullable: true
+                comment: City
+              - name: address_state
+                type: varchar(255)
+                nullable: true
+                comment: State/province
+              - name: address_zip
+                type: varchar(255)
+                nullable: true
+                comment: Postal code
+              - name: phone
+                type: varchar(255)
+                nullable: true
+                comment: Property contact phone
+              - name: email
+                type: varchar(255)
+                nullable: true
+                comment: Property contact email
+              - name: short_id
+                type: varchar(255)
+                nullable: true
+                comment: Human-readable identifier
+              - name: salesforce_id
+                type: varchar(255)
+                nullable: true
+                comment: Salesforce Property ID for integration
+              - name: status
+                type: varchar(50)
+                nullable: true
+                comment: Property status (ACTIVE, INACTIVE, etc.)
+              - name: settings
+                type: jsonb
+                nullable: true
+                comment: Property-level configuration
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: folders
+            description: |
+              Groups multiple entries for the same applicant/property combination.
+              Used when an applicant has multiple screening requests over time.
+            row_estimate: 300000+
+            primary_key: id
+            foreign_keys:
+              - column: property_id
+                references: properties(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to properties
+              - name: name
+                type: varchar(255)
+                nullable: true
+                comment: Folder name (often applicant name)
+              - name: status
+                type: varchar(50)
+                nullable: true
+                comment: Folder status
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: entries
+            description: |
+              Individual screening requests/cases. Each entry represents one verification
+              request for an applicant at a property. Central to the review workflow.
+            row_estimate: 1000000+
+            primary_key: id
+            foreign_keys:
+              - column: folder_id
+                references: folders(id)
+              - column: property_id
+                references: properties(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: folder_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to folders - grouping mechanism
+              - name: property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to properties
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Entry status (pending, approved, declined, etc.)
+              - name: unit_number
+                type: varchar(255)
+                nullable: true
+                comment: Unit/apartment number being applied for
+              - name: monthly_rent
+                type: numeric
+                nullable: true
+                comment: Monthly rent amount
+              - name: reference_number
+                type: varchar(255)
+                nullable: true
+                comment: External reference number (from PMS)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: owners
+            description: |
+              Property owners - external entities that own multiple properties.
+              Links to Salesforce for enterprise customer management.
+            row_estimate: 1000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Owner name
+              - name: salesforce_id
+                type: varchar(255)
+                nullable: true
+                comment: Salesforce Account ID
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: property_owners
+            description: |
+              Many-to-many junction table between properties and owners.
+              Allows properties to have multiple owners and owners to have multiple properties.
+            row_estimate: 50000+
+            primary_key: [property_id, owner_id]
+            foreign_keys:
+              - column: property_id
+                references: properties(id)
+              - column: owner_id
+                references: owners(id)
+            columns:
+              - name: property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to properties
+              - name: owner_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to owners
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: users
+            description: |
+              System users including staff, reviewers, and property managers.
+              Has access control through teams, roles, and property assignments.
+            row_estimate: 100000+
+            primary_key: id
+            foreign_keys:
+              - column: company_id
+                references: companies(id)
+              - column: team_id
+                references: team(id)
+              - column: role_id
+                references: role(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: email
+                type: varchar(255)
+                nullable: false
+                comment: Email address - used for login
+              - name: first_name
+                type: varchar(255)
+                nullable: true
+                comment: First name
+              - name: last_name
+                type: varchar(255)
+                nullable: true
+                comment: Last name
+              - name: company_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to companies - user's primary company
+              - name: team_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to team
+              - name: role_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to role - determines permissions
+              - name: encrypted_password
+                type: varchar(255)
+                nullable: false
+                comment: Hashed password (bcrypt)
+              - name: is_active
+                type: boolean
+                nullable: false
+                default: true
+                comment: Whether user account is active
+              - name: last_login_at
+                type: timestamp
+                nullable: true
+                comment: Last successful login timestamp
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: team
+            description: |
+              Organizational teams within companies. Used for grouping users and
+              delegating access control.
+            row_estimate: 5000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Team name
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: role
+            description: |
+              User roles/permissions. Defines what actions users can perform.
+              Common roles: admin, reviewer, property_manager, viewer.
+            row_estimate: 20
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Role name
+              - name: permissions
+                type: jsonb
+                nullable: true
+                comment: JSON array of permission strings
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: users_properties
+            description: |
+              Many-to-many junction between users and properties. Controls which
+              properties a user has access to view/manage.
+            row_estimate: 200000+
+            primary_key: [user_id, property_id]
+            foreign_keys:
+              - column: user_id
+                references: users(id)
+              - column: property_id
+                references: properties(id)
+            columns:
+              - name: user_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to users
+              - name: property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to properties
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: users_owners
+            description: |
+              Many-to-many junction between users and owners. Controls which
+              owner portfolios a user can access.
+            row_estimate: 10000+
+            primary_key: [user_id, owner_id]
+            foreign_keys:
+              - column: user_id
+                references: users(id)
+              - column: owner_id
+                references: owners(id)
+            columns:
+              - name: user_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to users
+              - name: owner_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to owners
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          # =========================================================================
+          # FRAUD DETECTION WORKFLOW (7 tables)
+          # =========================================================================
+          - name: proof
+            description: |
+              Documents/files uploaded for verification. Can be bank statements,
+              paystubs, tax returns, IDs, etc. Stores S3 location and metadata.
+            row_estimate: 3000000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: file_name
+                type: varchar(255)
+                nullable: false
+                comment: Original file name
+              - name: file_size_bytes
+                type: bigint
+                nullable: true
+                comment: File size in bytes
+              - name: file_type
+                type: varchar(100)
+                nullable: true
+                comment: MIME type (image/jpeg, application/pdf, etc.)
+              - name: s3_key
+                type: varchar(500)
+                nullable: false
+                comment: S3 object key/path for retrieving file
+              - name: s3_bucket
+                type: varchar(255)
+                nullable: false
+                comment: S3 bucket name
+              - name: uploaded_by_user_id
+                type: uuid
+                nullable: true
+                comment: User who uploaded the file
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: applicant_submission_document_sources
+            description: |
+              Junction table linking applicant submissions to uploaded documents.
+              One submission can have multiple documents.
+            row_estimate: 5000000+
+            primary_key: [applicant_submission_id, proof_id]
+            foreign_keys:
+              - column: applicant_submission_id
+                references: applicant_submissions(id)
+              - column: proof_id
+                references: proof(id)
+            columns:
+              - name: applicant_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicant_submissions
+              - name: proof_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to proof (documents)
+              - name: document_type
+                type: varchar(100)
+                nullable: true
+                comment: Classified document type (bank_statement, paystub, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: fraud_submissions
+            description: |
+              Fraud detection verification requests. Created when documents are
+              submitted for fraud analysis. Links to ML scoring and review workflow.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+              - column: applicant_submission_id
+                references: applicant_submissions(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicants
+              - name: applicant_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicant_submissions
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Submission status (pending, reviewing, completed)
+              - name: submitted_at
+                type: timestamp
+                nullable: false
+                comment: When fraud check was initiated
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_reviews
+            description: |
+              Human review records for fraud submissions. Created when a reviewer
+              examines documents and makes a determination.
+            row_estimate: 1500000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_submission_id
+                references: fraud_submissions(id)
+              - column: reviewer_user_id
+                references: users(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_submissions
+              - name: reviewer_user_id
+                type: uuid
+                nullable: false
+                comment: User who performed the review
+              - name: decision
+                type: varchar(50)
+                nullable: false
+                comment: Review decision (pass, fail, flag)
+              - name: confidence_level
+                type: varchar(50)
+                nullable: true
+                comment: Reviewer confidence (high, medium, low)
+              - name: notes
+                type: text
+                nullable: true
+                comment: Reviewer notes and observations
+              - name: reviewed_at
+                type: timestamp
+                nullable: false
+                comment: When review was completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_results
+            description: |
+              Final fraud determination results. Aggregates ML scores and human
+              review decisions into final outcome communicated to customer.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_submission_id
+                references: fraud_submissions(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_submissions
+              - name: result_status
+                type: varchar(50)
+                nullable: false
+                comment: Final result (pass, fail, inconclusive)
+              - name: fraud_score
+                type: numeric
+                nullable: true
+                comment: Aggregated fraud score (0-100, higher = more suspicious)
+              - name: risk_level
+                type: varchar(50)
+                nullable: true
+                comment: Risk category (low, medium, high, critical)
+              - name: result_data
+                type: jsonb
+                nullable: true
+                comment: Detailed result data including flagged items
+              - name: finalized_at
+                type: timestamp
+                nullable: false
+                comment: When result was finalized
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_document_reviews
+            description: |
+              Document-level fraud review details. Tracks which specific documents
+              were flagged during fraud analysis and why.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_review_id
+                references: fraud_reviews(id)
+              - column: proof_id
+                references: proof(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_review_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_reviews
+              - name: proof_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to proof (document)
+              - name: is_fraudulent
+                type: boolean
+                nullable: false
+                comment: Whether this document was flagged as fraudulent
+              - name: fraud_indicators
+                type: jsonb
+                nullable: true
+                comment: JSON array of specific fraud indicators found
+              - name: notes
+                type: text
+                nullable: true
+                comment: Reviewer notes for this specific document
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_document_analysis
+            description: |
+              AI/ML analysis results for individual documents. Stores feature
+              extraction, tampering detection, and ML model predictions.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: proof_id
+                references: proof(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: proof_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to proof (document)
+              - name: ml_model_version
+                type: varchar(50)
+                nullable: true
+                comment: Version of ML model used for analysis
+              - name: fraud_probability
+                type: numeric
+                nullable: true
+                comment: ML model fraud probability (0.0 to 1.0)
+              - name: features_extracted
+                type: jsonb
+                nullable: true
+                comment: Document features extracted by ML
+              - name: tampering_detected
+                type: boolean
+                nullable: false
+                default: false
+                comment: Whether image tampering was detected
+              - name: analysis_metadata
+                type: jsonb
+                nullable: true
+                comment: Additional analysis data and diagnostics
+              - name: analyzed_at
+                type: timestamp
+                nullable: false
+                comment: When analysis was performed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          # =========================================================================
+          # VERIFICATION WORKFLOWS (9 tables)
+          # =========================================================================
+
+          # --- Income Verification (3 tables) ---
+          - name: income_verification_submissions
+            description: |
+              Income analysis requests that trigger calculation of applicant's total
+              income from submitted documents. Determines if income meets property
+              requirements (typically 2.5-3x monthly rent).
+            row_estimate: 800000+
+            primary_key: id
+            foreign_keys:
+              - column: entry_id
+                references: entries(id)
+              - column: applicant_submission_document_source_id
+                references: applicant_submission_document_sources(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: entry_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to entries
+              - name: applicant_submission_document_source_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to submitted documents
+              - name: review_eligibility
+                type: varchar(255)
+                nullable: false
+                comment: Eligibility status (APPROVED, REJECTED, NEEDS_REVIEW)
+              - name: rejection_reason
+                type: varchar(255)
+                nullable: true
+                comment: Why rejected (insufficient_income, cannot_calculate, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Submission timestamp
+
+          - name: income_verification_reviews
+            description: |
+              Human review of income verification when automated system cannot make
+              a determination. Handles edge cases requiring human judgment.
+            row_estimate: 300000+
+            primary_key: id
+            foreign_keys:
+              - column: income_verification_submission_id
+                references: income_verification_submissions(id)
+              - column: reviewer_id
+                references: users(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: income_verification_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to income_verification_submissions
+              - name: reviewer_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to users - who performed review
+              - name: status
+                type: varchar(255)
+                nullable: false
+                comment: Review status (PENDING, IN_PROGRESS, COMPLETED)
+              - name: type
+                type: varchar(255)
+                nullable: false
+                default: INITIAL
+                comment: Review type (INITIAL, ESCALATION)
+              - name: review_method
+                type: varchar(50)
+                nullable: false
+                default: AUTOMATED
+                comment: How reviewed (AUTOMATED, MANUAL)
+              - name: calculation_id
+                type: uuid
+                nullable: true
+                comment: Links to external income calculation service
+              - name: rejection_reason
+                type: varchar(255)
+                nullable: true
+                comment: Reason for rejection
+              - name: assigned_date
+                type: timestamp
+                nullable: true
+                comment: When assigned to reviewer
+              - name: completed_date
+                type: timestamp
+                nullable: true
+                comment: When review completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Review creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: income_verification_results
+            description: |
+              Final income verification determination. Stores calculated income amounts,
+              verification status, and whether applicant meets income requirements.
+            row_estimate: 800000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_submission_id
+                references: applicant_submissions(id)
+            columns:
+              - name: id
+                type: bigint
+                nullable: false
+                comment: Primary key (auto-increment)
+              - name: applicant_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicant_submissions
+              - name: total_monthly_income
+                type: numeric
+                nullable: true
+                comment: Calculated total monthly income
+              - name: income_multiplier
+                type: numeric
+                nullable: true
+                comment: Income as multiple of rent (e.g. 2.8 = 2.8x rent)
+              - name: meets_requirements
+                type: boolean
+                nullable: false
+                comment: Whether income meets property requirements
+              - name: verification_status
+                type: varchar(50)
+                nullable: false
+                comment: Final status (verified, unverified, insufficient)
+              - name: income_sources
+                type: jsonb
+                nullable: true
+                comment: Breakdown of income by source (employment, benefits, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          # --- Asset Verification (3 tables) ---
+          - name: asset_verification_submissions
+            description: |
+              Asset liquidity analysis requests. Verifies applicant has sufficient
+              liquid assets (bank balances, investments) as alternative to income.
+            row_estimate: 200000+
+            primary_key: id
+            foreign_keys:
+              - column: entry_id
+                references: entries(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: entry_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to entries
+              - name: review_eligibility
+                type: varchar(255)
+                nullable: false
+                comment: Eligibility status (APPROVED, REJECTED, NEEDS_REVIEW)
+              - name: rejection_reason
+                type: varchar(255)
+                nullable: true
+                comment: Why rejected (insufficient_assets, unclear_statements, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Submission timestamp
+
+          - name: asset_verification_reviews
+            description: |
+              Human review of asset verification. Examines bank statements and
+              investment accounts to verify liquid asset sufficiency.
+            row_estimate: 100000+
+            primary_key: id
+            foreign_keys:
+              - column: asset_verification_submission_id
+                references: asset_verification_submissions(id)
+              - column: reviewer_id
+                references: users(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: asset_verification_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to asset_verification_submissions
+              - name: reviewer_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to users
+              - name: status
+                type: varchar(255)
+                nullable: false
+                comment: Review status (PENDING, IN_PROGRESS, COMPLETED)
+              - name: calculation_id
+                type: uuid
+                nullable: true
+                comment: Links to asset calculation service
+              - name: rejection_reason
+                type: varchar(255)
+                nullable: true
+                comment: Reason for rejection
+              - name: assigned_date
+                type: timestamp
+                nullable: true
+                comment: When assigned to reviewer
+              - name: completed_date
+                type: timestamp
+                nullable: true
+                comment: When review completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Review creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: asset_verification_results
+            description: |
+              Final asset verification determination. Stores total liquid assets
+              and whether applicant meets asset requirements.
+            row_estimate: 200000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_submission_id
+                references: applicant_submissions(id)
+            columns:
+              - name: id
+                type: bigint
+                nullable: false
+                comment: Primary key (auto-increment)
+              - name: applicant_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicant_submissions
+              - name: total_liquid_assets
+                type: numeric
+                nullable: true
+                comment: Total verified liquid assets
+              - name: asset_months_coverage
+                type: numeric
+                nullable: true
+                comment: How many months of rent assets can cover
+              - name: meets_requirements
+                type: boolean
+                nullable: false
+                comment: Whether assets meet property requirements
+              - name: verification_status
+                type: varchar(50)
+                nullable: false
+                comment: Final status (verified, unverified, insufficient)
+              - name: asset_breakdown
+                type: jsonb
+                nullable: true
+                comment: Assets by account type (checking, savings, investments)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          # --- Identity Verification (1 table) ---
+          - name: id_verifications
+            description: |
+              Third-party identity verification via Incode, Persona, or other IDV
+              providers. Verifies government ID matches selfie and validates ID
+              authenticity using AI.
+            row_estimate: 500000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicants
+              - name: provider
+                type: varchar(100)
+                nullable: false
+                comment: IDV provider (incode, persona, etc.)
+              - name: provider_session_id
+                type: varchar(255)
+                nullable: true
+                comment: Session ID from IDV provider
+              - name: verification_status
+                type: varchar(50)
+                nullable: false
+                comment: Status (pending, verified, failed, expired)
+              - name: verification_result
+                type: jsonb
+                nullable: true
+                comment: Full verification result from provider
+              - name: id_type
+                type: varchar(100)
+                nullable: true
+                comment: Type of ID (drivers_license, passport, etc.)
+              - name: verified_name
+                type: varchar(255)
+                nullable: true
+                comment: Name from verified ID document
+              - name: verified_dob
+                type: date
+                nullable: true
+                comment: Date of birth from verified ID
+              - name: face_match_score
+                type: numeric
+                nullable: true
+                comment: Selfie-to-ID face matching score (0.0-1.0)
+              - name: verified_at
+                type: timestamp
+                nullable: true
+                comment: When verification completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          # --- Rent Verification (2 tables) ---
+          - name: rent_verifications
+            description: |
+              Rental payment history checks via third-party APIs (ClearNow, RentTrack,
+              etc.). Verifies applicant's rental payment track record.
+            row_estimate: 150000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicants
+              - name: provider
+                type: varchar(100)
+                nullable: false
+                comment: Rent verification provider
+              - name: provider_request_id
+                type: varchar(255)
+                nullable: true
+                comment: Request ID from provider
+              - name: verification_status
+                type: varchar(50)
+                nullable: false
+                comment: Status (pending, completed, failed, not_found)
+              - name: payment_history
+                type: jsonb
+                nullable: true
+                comment: Rental payment history data from provider
+              - name: on_time_payments
+                type: integer
+                nullable: true
+                comment: Count of on-time rent payments
+              - name: late_payments
+                type: integer
+                nullable: true
+                comment: Count of late rent payments
+              - name: months_of_history
+                type: integer
+                nullable: true
+                comment: How many months of history available
+              - name: verified_at
+                type: timestamp
+                nullable: true
+                comment: When verification completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: rent_verification_events
+            description: |
+              Event log for rent verification workflow. Tracks API calls, webhook
+              callbacks, and status changes for rent verification requests.
+            row_estimate: 400000+
+            primary_key: id
+            foreign_keys:
+              - column: rent_verification_id
+                references: rent_verifications(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: rent_verification_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to rent_verifications
+              - name: event_type
+                type: varchar(100)
+                nullable: false
+                comment: Event type (api_request, webhook_received, status_change, etc.)
+              - name: event_data
+                type: jsonb
+                nullable: true
+                comment: Event payload and details
+              - name: occurred_at
+                type: timestamp
+                nullable: false
+                comment: When event occurred
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          # =========================================================================
+          # REVIEW QUEUE SYSTEM (7 tables)
+          # For detailed documentation see: REVIEW_QUEUE_SYSTEM.md
+          # =========================================================================
+          - name: review_items
+            description: |
+              Individual items in review queues. Represents tasks awaiting human review
+              across all verification types (fraud, income, asset, identity).
+            row_estimate: 2000000+
+            primary_key: id
+            key_columns: [entry_id, assignee_user_id, status, priority, queue_type]
+
+          - name: reviewer_queue
+            description: |
+              Review queue assignments and workload distribution. Manages which reviewers
+              are assigned to which properties and verification types.
+            row_estimate: 50000+
+            primary_key: id
+            key_columns: [user_id, property_id, queue_type, is_active]
+
+          - name: entry_log
+            description: |
+              Comprehensive audit trail of all actions taken on entries. Tracks status
+              changes, assignments, reviews, and system actions for compliance.
+            row_estimate: 10000000+
+            primary_key: id
+            key_columns: [entry_id, user_id, action_type, occurred_at]
+
+          - name: priority_configuration
+            description: |
+              Configurable priority rules for review queue ordering. Defines which
+              entries should be reviewed first based on urgency, SLA, property tier.
+            row_estimate: 1000+
+            primary_key: id
+            key_columns: [property_id, rule_type, priority_score]
+
+          - name: review_escalations
+            description: |
+              Escalation tracking when reviews exceed SLA or require senior review.
+              Manages escalation workflows and notifications.
+            row_estimate: 100000+
+            primary_key: id
+            key_columns: [review_item_id, escalated_to_user_id, reason, escalated_at]
+
+          - name: fast_fde_inboxes
+            description: |
+              Fast FDE (Fraud Detection Engine) reviewer inbox view. Optimized queue
+              for high-speed fraud review workflow with keyboard shortcuts.
+            row_estimate: 500000+
+            primary_key: id
+            key_columns: [reviewer_id, entry_id, position_in_queue, assigned_at]
+
+          - name: reviewer_performance_metrics
+            description: |
+              Tracks reviewer productivity and accuracy metrics. Used for performance
+              reviews, capacity planning, and quality assurance.
+            row_estimate: 50000+
+            primary_key: id
+            key_columns: [user_id, period_date, reviews_completed, avg_review_time, accuracy_rate]
+
+          # =========================================================================
+          # FEATURES & CONFIGURATION (7 tables)
+          # For detailed documentation see: FEATURES_CONFIGURATION.md
+          # =========================================================================
+          - name: features
+            description: |
+              Master feature flag definitions. Controls feature rollouts, A/B tests,
+              and product capabilities across the platform.
+            row_estimate: 200+
+            primary_key: id
+            key_columns: [name, is_enabled_globally, rollout_percentage, feature_type]
+
+          - name: property_features
+            description: |
+              Property-specific feature enablement. Overrides global feature flags
+              for individual properties or pilot customers.
+            row_estimate: 100000+
+            primary_key: [property_id, feature_id]
+            key_columns: [property_id, feature_id, is_enabled, enabled_at]
+
+          - name: user_features
+            description: |
+              User-specific feature enablement. Allows internal users to access
+              beta features or override settings.
+            row_estimate: 10000+
+            primary_key: [user_id, feature_id]
+            key_columns: [user_id, feature_id, is_enabled]
+
+          - name: global_settings
+            description: |
+              Application-wide configuration settings. Stores system-level config
+              that affects all tenants (maintenance mode, API limits, etc.).
+            row_estimate: 100+
+            primary_key: id
+            key_columns: [setting_key, setting_value, setting_type]
+
+          - name: property_settings
+            description: |
+              Property-specific configuration overrides. Customizes workflows,
+              thresholds, and business rules per property.
+            row_estimate: 50000+
+            primary_key: [property_id, setting_key]
+            key_columns: [property_id, setting_key, setting_value]
+
+          - name: ab_test_variants
+            description: |
+              A/B test variant assignments. Tracks which users/properties are in
+              which experimental groups for product testing.
+            row_estimate: 500000+
+            primary_key: id
+            key_columns: [experiment_name, variant_name, assigned_entity_id, assigned_at]
+
+          - name: feature_usage_analytics
+            description: |
+              Feature adoption and usage metrics. Tracks when features are used
+              to measure adoption and identify unused features.
+            row_estimate: 5000000+
+            primary_key: id
+            key_columns: [feature_id, property_id, user_id, used_at, usage_count]
+
+          # =========================================================================
+          # INTEGRATION LAYER (6 tables)
+          # For detailed documentation see: INTEGRATION_LAYER.md
+          # =========================================================================
+          - name: webhooks
+            description: |
+              Outbound webhook configurations. Defines endpoints to notify when
+              verification results are ready or status changes occur.
+            row_estimate: 100000+
+            primary_key: id
+            key_columns: [property_id, event_type, endpoint_url, is_active]
+
+          - name: webhook_delivery_attempts
+            description: |
+              Webhook delivery log with retry tracking. Records every attempt to
+              deliver webhook payloads with response codes and retry logic.
+            row_estimate: 5000000+
+            primary_key: id
+            key_columns: [webhook_id, entry_id, status, attempt_number, attempted_at]
+
+          - name: yardi_integrations
+            description: |
+              Yardi property management system integration configurations. Connects
+              properties to their Yardi PMS for automated applicant sync.
+            row_estimate: 5000+
+            primary_key: id
+            key_columns: [property_id, yardi_property_id, is_active, sync_enabled]
+
+          - name: yardi_properties
+            description: |
+              Yardi property mapping and metadata. Stores Yardi-specific property
+              identifiers and configuration for bi-directional sync.
+            row_estimate: 5000+
+            primary_key: id
+            key_columns: [yardi_integration_id, yardi_property_code, property_id]
+
+          - name: yardi_entries
+            description: |
+              Yardi applicant screening request sync. Links entries to Yardi guest
+              cards and tracks sync status for result push-back.
+            row_estimate: 500000+
+            primary_key: id
+            key_columns: [entry_id, yardi_guest_card_id, sync_status, last_synced_at]
+
+          - name: api_logs
+            description: |
+              API request/response logging for external integrations. Captures all
+              inbound API calls for debugging, monitoring, and compliance.
+            row_estimate: 50000000+
+            primary_key: id
+            key_columns: [endpoint, method, property_id, response_code, created_at]
+
+          # =========================================================================
+          # DISPUTES & FREQUENT FLYER DETECTION (5 tables)
+          # For detailed documentation see: DISPUTES_WORKFLOW.md, FREQUENT_FLYER_DETECTION.md
+          # =========================================================================
+          - name: disputes
+            description: |
+              Applicant dispute submissions and resolution tracking. Manages formal
+              disputes of fraud determinations with case management workflow.
+            row_estimate: 50000+
+            primary_key: id
+            key_columns: [entry_id, applicant_id, status, category_id, submitted_at]
+
+          - name: dispute_categories
+            description: |
+              Categorization of dispute reasons. Structured taxonomy for classifying
+              types of disputes (incorrect document, misidentification, etc.).
+            row_estimate: 50+
+            primary_key: id
+            key_columns: [name, parent_category_id, requires_evidence]
+
+          - name: dispute_emails
+            description: |
+              Email communication log for disputes. Tracks all correspondence between
+              applicants, properties, and Snappt staff regarding disputes.
+            row_estimate: 200000+
+            primary_key: id
+            key_columns: [dispute_id, direction, subject, sent_at, sender_email]
+
+          - name: frequent_flyer_variations
+            description: |
+              Applicant identity variations for repeat applicant detection. Stores
+              name/email/phone variants with fuzzy matching for fraud ring detection.
+            row_estimate: 2000000+
+            primary_key: id
+            key_columns: [applicant_id, variation_type, normalized_value, confidence_score]
+
+          - name: frequent_flyer_matched_confidences
+            description: |
+              Confidence scores for repeat applicant matches. Links applicants with
+              match probability scores for fraud ring investigation.
+            row_estimate: 5000000+
+            primary_key: id
+            key_columns: [applicant_id_1, applicant_id_2, confidence_score, matched_on_fields]
+
+          # =========================================================================
+          # SUPPORTING SYSTEMS (Selected key tables - 8 tables)
+          # For full documentation see: SUPPORTING_SYSTEMS.md, INFRASTRUCTURE_MAINTENANCE.md
+          # =========================================================================
+          - name: oban_jobs
+            description: |
+              Background job queue (Elixir Oban). Manages asynchronous tasks like
+              document processing, email sending, webhook delivery, and ML scoring.
+            row_estimate: 20000000+
+            primary_key: id
+            key_columns: [queue, worker, state, scheduled_at, attempted_at, max_attempts]
+
+          - name: api_keys
+            description: |
+              API authentication keys for programmatic access. Manages customer API
+              keys with scopes, rate limits, and usage tracking.
+            row_estimate: 10000+
+            primary_key: id
+            key_columns: [property_id, key_hash, scopes, is_active, expires_at]
+
+          - name: invitations
+            description: |
+              User invitation management. Tracks pending invitations sent to new users
+              before they complete account setup.
+            row_estimate: 100000+
+            primary_key: id
+            key_columns: [email, invited_by_user_id, property_id, accepted_at, expires_at]
+
+          - name: sessions
+            description: |
+              User authentication sessions. Manages logged-in user sessions with
+              token storage and expiration tracking.
+            row_estimate: 500000+
+            primary_key: id
+            key_columns: [user_id, token_hash, ip_address, created_at, expires_at]
+
+          - name: announcements
+            description: |
+              In-app announcement and notification management. Displays messages to
+              users about new features, maintenance, or important updates.
+            row_estimate: 500+
+            primary_key: id
+            key_columns: [title, message, target_audience, active_from, active_until]
+
+          - name: schema_migrations
+            description: |
+              Database schema migration tracking (Ecto). Records applied migrations
+              for version control and deployment management.
+            row_estimate: 500+
+            primary_key: version
+            key_columns: [version, inserted_at]
+
+          - name: audit_transaction_events
+            description: |
+              Comprehensive audit log of all database transactions. Tracks changes
+              to critical tables for compliance, forensics, and change tracking.
+            row_estimate: 50000000+
+            primary_key: id
+            key_columns: [table_name, record_id, action, user_id, occurred_at, changes_json]
+
+          - name: analytics_events
+            description: |
+              Product analytics event stream. Captures user actions, feature usage,
+              and workflow progression for product intelligence.
+            row_estimate: 100000000+
+            primary_key: id
+            key_columns: [event_name, user_id, property_id, event_data, occurred_at]
+
+  # =============================================================================
+  # ENTERPRISE_POSTGRESQL - Integration Services Database
+  # =============================================================================
+  - name: enterprise_postgresql
+    description: |
+      Enterprise integration and communication services. Manages bi-directional
+      integration with external systems (Salesforce, Yardi, custom APIs) and
+      handles email delivery. Enables enterprise customers to sync applicant data
+      and verification results with their systems of record.
+
+    table_count: 6
+    primary_technology: TypeScript/Node.js with TypeORM
+    cross_database_links:
+      - Applicant data flows from fraud_postgresql to external systems
+      - Property configurations sync between Salesforce and fraud_postgresql
+      - Webhook events trigger on fraud_postgresql changes
+
+    schemas:
+      - name: public
+        description: Main schema for enterprise integration tables
+        tables:
+          - name: enterprise_applicant
+            description: |
+              Enterprise customer applicant records with external system mappings.
+              Links Snappt applicants to customer PMS/CRM systems via external IDs.
+            row_estimate: 500000+
+            primary_key: id
+            foreign_keys:
+              - column: snappt_applicant_detail_id
+                references: fraud_postgresql.applicant_details(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: snappt_applicant_detail_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.applicant_details - cross-database reference
+              - name: integration_ids
+                type: jsonb
+                nullable: true
+                comment: External system IDs (Yardi guest card ID, Salesforce contact ID, etc.)
+              - name: status
+                type: varchar(100)
+                nullable: false
+                comment: Sync status (pending, synced, failed, etc.)
+              - name: yardi_status
+                type: varchar(100)
+                nullable: true
+                comment: Yardi-specific sync status
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: enterprise_property
+            description: |
+              Enterprise customer property records with integration configuration.
+              Links Snappt properties to customer systems and manages sync schedules.
+            row_estimate: 50000+
+            primary_key: id
+            foreign_keys:
+              - column: snappt_property_id
+                references: fraud_postgresql.properties(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: snappt_property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.properties - cross-database reference
+              - name: integration_details
+                type: jsonb
+                nullable: true
+                comment: Integration configuration and credentials
+              - name: last_run_at
+                type: timestamp
+                nullable: true
+                comment: Last successful sync timestamp
+              - name: sync_errors
+                type: jsonb
+                nullable: true
+                comment: Recent sync errors and diagnostics
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: enterprise_integration_configuration
+            description: |
+              Integration type configurations (Salesforce, Yardi, custom webhooks).
+              Stores API credentials, sync settings, and business rule mappings.
+            row_estimate: 10000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: type
+                type: varchar(100)
+                nullable: false
+                comment: Integration type (salesforce, yardi, webhook, api)
+              - name: name
+                type: varchar(255)
+                nullable: false
+                comment: Integration configuration name
+              - name: integration_details
+                type: jsonb
+                nullable: false
+                comment: API credentials, endpoints, and configuration
+              - name: metadata
+                type: jsonb
+                nullable: true
+                comment: Additional metadata and settings
+              - name: deleted_at
+                type: timestamp
+                nullable: true
+                comment: Soft delete timestamp
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: inbound_webhooks
+            description: |
+              Inbound webhook event processing queue. Receives events from external
+              systems (applicant created, status changed) and triggers Snappt workflows.
+            row_estimate: 2000000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: source
+                type: varchar(100)
+                nullable: false
+                comment: Webhook source system (salesforce, yardi, etc.)
+              - name: event_type
+                type: varchar(100)
+                nullable: false
+                comment: Event type (applicant.created, status.changed, etc.)
+              - name: external_event_id
+                type: varchar(255)
+                nullable: true
+                comment: Event ID from external system
+              - name: event_body
+                type: jsonb
+                nullable: false
+                comment: Full webhook payload
+              - name: processing_status
+                type: varchar(50)
+                nullable: false
+                comment: Processing status (pending, processing, completed, failed)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: outbound_integration_attempts
+            description: |
+              Outbound sync attempts with external systems. Tracks result pushes
+              to customer PMS/CRM with retry logic and error handling.
+            row_estimate: 3000000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: integration_type
+                type: varchar(100)
+                nullable: false
+                comment: Integration type being synced to
+              - name: entity_id
+                type: uuid
+                nullable: false
+                comment: Entity ID being synced (entry, applicant, etc.)
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Attempt status (pending, in_progress, completed, failed)
+              - name: attempt_count
+                type: integer
+                nullable: false
+                default: 0
+                comment: Number of sync attempts made
+              - name: last_attempt_at
+                type: timestamp
+                nullable: true
+                comment: Timestamp of most recent attempt
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: outbound_integration_attempt_item
+            description: |
+              Line items for outbound integration attempts. Granular tracking of
+              individual data elements synced (applicant fields, verification results).
+            row_estimate: 10000000+
+            primary_key: id
+            foreign_keys:
+              - column: outbound_integration_attempt_id
+                references: outbound_integration_attempts(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: outbound_integration_attempt_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to outbound_integration_attempts
+              - name: item_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of data being synced (applicant_field, verification_result, etc.)
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Item sync status (pending, completed, failed)
+              - name: error_message
+                type: text
+                nullable: true
+                comment: Error message if sync failed
+              - name: synced_at
+                type: timestamp
+                nullable: true
+                comment: When item was successfully synced
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: email_delivery_attempts
+            description: |
+              Email delivery tracking via Postmark. Logs all transactional emails
+              (invitations, results, notifications) with delivery status and webhooks.
+            row_estimate: 5000000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: template_name
+                type: varchar(255)
+                nullable: false
+                comment: Email template identifier
+              - name: recipient_email
+                type: varchar(255)
+                nullable: false
+                comment: Email recipient address
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Delivery status (sent, delivered, bounced, failed)
+              - name: postmark_message_id
+                type: varchar(255)
+                nullable: true
+                comment: Postmark message ID for tracking
+              - name: sent_at
+                type: timestamp
+                nullable: true
+                comment: When email was sent
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+  # =============================================================================
+  # DP_INCOME_VALIDATION - Income Calculation Microservice
+  # =============================================================================
+  - name: dp_income_validation
+    description: |
+      Income calculation microservice. Performs automated income extraction from
+      documents and calculates eligibility. Uses Python-based document parsing,
+      OCR, and income rules engine. Links back to fraud_postgresql for property
+      requirements and applicant context.
+
+    table_count: 5
+    primary_technology: Python with SQLAlchemy
+    cross_database_links:
+      - Triggered by applicant submissions in fraud_postgresql
+      - Reads property income requirements from fraud_postgresql
+      - Writes results back to income_verification_results
+
+    schemas:
+      - name: public
+        description: Income validation service tables
+        tables:
+          - name: income_reports
+            description: |
+              Income calculation results with detailed breakdowns. Stores extracted
+              income amounts by source (employment, benefits) and final determination.
+            row_estimate: 800000+
+            primary_key: id
+            foreign_keys:
+              - column: property_id
+                references: fraud_postgresql.properties(id)
+                note: Cross-database reference
+              - column: applicant_id
+                references: fraud_postgresql.applicants(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: property_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.properties - cross-database reference
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.applicants - cross-database reference
+              - name: total_monthly_income
+                type: numeric
+                nullable: true
+                comment: Calculated total monthly income from all sources
+              - name: meets_requirements
+                type: boolean
+                nullable: false
+                comment: Whether calculated income meets property requirements
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: income_documents
+            description: |
+              Document processing results for income verification. Tracks OCR extraction,
+              classification, and income amount parsing per document.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: income_report_id
+                references: income_reports(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: income_report_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to income_reports
+              - name: document_s3_key
+                type: varchar(500)
+                nullable: false
+                comment: S3 key/path for document file
+              - name: document_type
+                type: varchar(100)
+                nullable: false
+                comment: Classified document type (paystub, w2, 1099, etc.)
+              - name: extracted_amounts
+                type: jsonb
+                nullable: true
+                comment: Income amounts extracted from document by OCR/AI
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: income_sources
+            description: |
+              Structured income source records (employer, benefits, self-employment).
+              Normalized income data for aggregation and reporting.
+            row_estimate: 1500000+
+            primary_key: id
+            foreign_keys:
+              - column: income_report_id
+                references: income_reports(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: income_report_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to income_reports
+              - name: source_type
+                type: varchar(100)
+                nullable: false
+                comment: Income source type (employment, benefits, self_employment, etc.)
+              - name: monthly_amount
+                type: numeric
+                nullable: false
+                comment: Monthly income amount from this source
+              - name: verified
+                type: boolean
+                nullable: false
+                default: false
+                comment: Whether income source has been verified
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: income_calculation_rules
+            description: |
+              Configurable income calculation business rules. Defines how to calculate
+              monthly income from various document types and employment situations.
+            row_estimate: 100+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: rule_name
+                type: varchar(255)
+                nullable: false
+                comment: Human-readable rule name
+              - name: document_type
+                type: varchar(100)
+                nullable: false
+                comment: Document type this rule applies to
+              - name: calculation_formula
+                type: text
+                nullable: false
+                comment: Formula or logic for calculating monthly income
+              - name: is_active
+                type: boolean
+                nullable: false
+                default: true
+                comment: Whether this rule is currently active
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: income_validation_audit_log
+            description: |
+              Audit trail for income calculations. Records every calculation attempt,
+              rule application, and manual adjustment for compliance.
+            row_estimate: 5000000+
+            primary_key: id
+            foreign_keys:
+              - column: income_report_id
+                references: income_reports(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: income_report_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to income_reports
+              - name: action_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of action (calculation, manual_adjustment, rule_applied, etc.)
+              - name: performed_by
+                type: uuid
+                nullable: true
+                comment: User ID who performed the action
+              - name: changes_made
+                type: jsonb
+                nullable: true
+                comment: Details of changes or calculations performed
+              - name: occurred_at
+                type: timestamp
+                nullable: false
+                comment: When the action occurred
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+  # =============================================================================
+  # DP_DOCUMENT_INTELLIGENCE - Asset Verification & AI Document Analysis
+  # =============================================================================
+  - name: dp_document_intelligence
+    description: |
+      Asset verification and intelligent document analysis microservice. Uses AI/ML
+      to extract structured data from bank statements, investment accounts, and
+      tax documents. Performs tampering detection and quality assessment.
+
+    table_count: 8
+    primary_technology: Python with AI/ML frameworks (LangChain, OpenAI, Claude)
+    cross_database_links:
+      - Processes documents from fraud_postgresql.proof table
+      - Links to asset_verification_submissions for context
+      - Stores AI analysis results for human review
+
+    schemas:
+      - name: public
+        description: Document intelligence service tables
+        tables:
+          - name: asset_reports
+            description: |
+              Asset verification calculation results. Aggregates liquid assets from
+              bank statements, investment accounts, and determines eligibility.
+            row_estimate: 200000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_submission_id
+                references: fraud_postgresql.applicant_submissions(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.applicant_submissions
+              - name: total_liquid_assets
+                type: numeric
+                nullable: true
+                comment: Calculated total liquid assets
+              - name: meets_requirements
+                type: boolean
+                nullable: false
+                comment: Whether assets meet property requirements
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: bank_statement_analysis
+            description: |
+              AI-powered bank statement parsing results. Extracts balances, transactions,
+              and financial patterns using ML document understanding.
+            row_estimate: 500000+
+            primary_key: id
+            foreign_keys:
+              - column: asset_report_id
+                references: asset_reports(id)
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: asset_report_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to asset_reports
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: account_balance
+                type: numeric
+                nullable: true
+                comment: Extracted account balance
+              - name: analysis_confidence
+                type: numeric
+                nullable: false
+                comment: AI confidence score (0.0-1.0)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: document_classification_results
+            description: |
+              ML-based document type classification. Automatically identifies document
+              types (W2, paystub, bank statement) from uploaded files.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: predicted_type
+                type: varchar(100)
+                nullable: false
+                comment: Predicted document type (bank_statement, paystub, w2, etc.)
+              - name: confidence_score
+                type: numeric
+                nullable: false
+                comment: ML classification confidence (0.0-1.0)
+              - name: model_version
+                type: varchar(50)
+                nullable: false
+                comment: ML model version used for classification
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: tampering_detection_results
+            description: |
+              Image forensics analysis for document tampering. Detects photo editing,
+              cloning, text overlay, and other manipulation indicators.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: tampering_detected
+                type: boolean
+                nullable: false
+                comment: Whether tampering was detected
+              - name: confidence_score
+                type: numeric
+                nullable: false
+                comment: Detection confidence score (0.0-1.0)
+              - name: indicators_found
+                type: jsonb
+                nullable: true
+                comment: JSON array of specific tampering indicators detected
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: ocr_extraction_results
+            description: |
+              OCR (Optical Character Recognition) raw output. Stores extracted text
+              from document images with confidence scores and bounding boxes.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: extracted_text
+                type: text
+                nullable: true
+                comment: Raw OCR extracted text
+              - name: confidence_score
+                type: numeric
+                nullable: false
+                comment: OCR confidence score (0.0-1.0)
+              - name: ocr_engine
+                type: varchar(100)
+                nullable: false
+                comment: OCR engine used (tesseract, aws_textract, google_vision, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: ai_agent_executions
+            description: |
+              AI agent workflow execution tracking. Logs LangChain/LangGraph agent
+              runs for document processing with intermediate steps and decisions.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: agent_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of AI agent executed
+              - name: execution_status
+                type: varchar(50)
+                nullable: false
+                comment: Execution status (completed, failed, timeout, etc.)
+              - name: duration_ms
+                type: integer
+                nullable: true
+                comment: Execution duration in milliseconds
+              - name: error_message
+                type: text
+                nullable: true
+                comment: Error message if execution failed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: structured_data_extraction
+            description: |
+              Structured data extracted from documents via AI. Stores key-value pairs
+              (account number, balance, employer name) with source location in document.
+            row_estimate: 10000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: field_name
+                type: varchar(255)
+                nullable: false
+                comment: Name of extracted field (account_number, balance, employer_name, etc.)
+              - name: field_value
+                type: text
+                nullable: true
+                comment: Extracted field value
+              - name: confidence_score
+                type: numeric
+                nullable: false
+                comment: Extraction confidence (0.0-1.0)
+              - name: source_location
+                type: jsonb
+                nullable: true
+                comment: Bounding box or coordinates where data was found in document
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: document_quality_scores
+            description: |
+              Document quality assessment scores. Evaluates image clarity, completeness,
+              and readability to determine if document is suitable for analysis.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof - cross-database reference
+              - name: quality_score
+                type: numeric
+                nullable: false
+                comment: Overall quality score (0.0-1.0)
+              - name: issues_found
+                type: jsonb
+                nullable: true
+                comment: JSON array of quality issues (blurry, partial, low_resolution, etc.)
+              - name: is_processable
+                type: boolean
+                nullable: false
+                comment: Whether document is of sufficient quality to process
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+  # =============================================================================
+  # AV_POSTGRES - ML Fraud Scoring & Rulings
+  # =============================================================================
+  - name: av_postgres
+    description: |
+      Automated Validation - ML-powered fraud detection scoring engine. Runs machine
+      learning models on documents to predict fraud probability. Generates rulings
+      (pass/fail/review) based on model ensemble and business rules.
+
+    table_count: 10
+    primary_technology: Python with ML frameworks (scikit-learn, TensorFlow)
+    cross_database_links:
+      - Scores documents from fraud_postgresql.fraud_submissions
+      - Model predictions inform fraud_reviews in fraud_postgresql
+      - Training data sourced from historical fraud_results
+
+    schemas:
+      - name: public
+        description: ML fraud scoring service tables
+        tables:
+          - name: fraud_scoring_requests
+            description: |
+              ML scoring job requests. Queues documents for fraud analysis and tracks
+              processing status through ML pipeline.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_submission_id
+                references: fraud_postgresql.fraud_submissions(id)
+                note: Cross-database reference
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.fraud_submissions
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Processing status (pending, processing, completed, failed)
+              - name: requested_at
+                type: timestamp
+                nullable: false
+                comment: When scoring was requested
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_scores
+            description: |
+              ML model fraud probability scores per document. Stores raw model outputs
+              (0.0-1.0 probability) from multiple fraud detection models.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: scoring_request_id
+                references: fraud_scoring_requests(id)
+              - column: model_id
+                references: ml_models(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: scoring_request_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_scoring_requests
+              - name: model_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to ml_models
+              - name: fraud_probability
+                type: numeric
+                nullable: false
+                comment: Model fraud probability score (0.0-1.0)
+              - name: confidence_score
+                type: numeric
+                nullable: false
+                comment: Model confidence in prediction (0.0-1.0)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: fraud_rulings
+            description: |
+              Final fraud determination rulings from ML system. Aggregates model scores
+              and applies business logic to generate pass/fail/review decisions.
+            row_estimate: 2000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_submission_id
+                references: fraud_postgresql.fraud_submissions(id)
+                note: Cross-database reference
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_submission_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.fraud_submissions
+              - name: ruling
+                type: varchar(50)
+                nullable: false
+                comment: Final ML ruling (pass, fail, review)
+              - name: confidence_level
+                type: varchar(50)
+                nullable: false
+                comment: Confidence level (high, medium, low)
+              - name: requires_human_review
+                type: boolean
+                nullable: false
+                comment: Whether human review is required
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: ml_models
+            description: |
+              ML model registry with versions and metadata. Tracks deployed fraud
+              detection models, performance metrics, and A/B test assignments.
+            row_estimate: 50+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: model_name
+                type: varchar(255)
+                nullable: false
+                comment: Model name/identifier
+              - name: version
+                type: varchar(50)
+                nullable: false
+                comment: Model version
+              - name: model_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of model (cnn, random_forest, ensemble, etc.)
+              - name: is_active
+                type: boolean
+                nullable: false
+                default: false
+                comment: Whether model is currently active in production
+              - name: deployed_at
+                type: timestamp
+                nullable: true
+                comment: When model was deployed to production
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: model_features
+            description: |
+              Feature extraction results for ML models. Stores computed features
+              (image statistics, text patterns) used as model inputs.
+            row_estimate: 3000000+
+            primary_key: id
+            foreign_keys:
+              - column: document_id
+                references: fraud_postgresql.proof(id)
+                note: Cross-database reference
+              - column: model_id
+                references: ml_models(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_postgresql.proof
+              - name: model_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to ml_models
+              - name: features_json
+                type: jsonb
+                nullable: false
+                comment: Extracted feature vector as JSON
+              - name: extracted_at
+                type: timestamp
+                nullable: false
+                comment: When features were extracted
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: model_predictions
+            description: |
+              Individual model predictions before ensemble. Tracks each model's vote
+              in fraud detection ensemble for explainability and debugging.
+            row_estimate: 10000000+
+            primary_key: id
+            foreign_keys:
+              - column: scoring_request_id
+                references: fraud_scoring_requests(id)
+              - column: model_id
+                references: ml_models(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: scoring_request_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_scoring_requests
+              - name: model_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to ml_models
+              - name: prediction
+                type: varchar(50)
+                nullable: false
+                comment: Model prediction (fraud, legitimate)
+              - name: confidence
+                type: numeric
+                nullable: false
+                comment: Prediction confidence (0.0-1.0)
+              - name: latency_ms
+                type: integer
+                nullable: true
+                comment: Model inference latency in milliseconds
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: fraud_indicators
+            description: |
+              Specific fraud indicators detected (font mismatch, inconsistent spacing,
+              cloned regions). Provides explainability for ML fraud determinations.
+            row_estimate: 5000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_score_id
+                references: fraud_scores(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_score_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_scores
+              - name: indicator_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of indicator (font_mismatch, clone_stamp, inconsistent_spacing, etc.)
+              - name: severity
+                type: varchar(50)
+                nullable: false
+                comment: Severity level (low, medium, high, critical)
+              - name: description
+                type: text
+                nullable: true
+                comment: Human-readable description of indicator
+              - name: location
+                type: jsonb
+                nullable: true
+                comment: Bounding box or coordinates where indicator was found
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: model_performance_metrics
+            description: |
+              ML model performance tracking over time. Monitors accuracy, precision,
+              recall, and drift detection for model quality assurance.
+            row_estimate: 10000+
+            primary_key: id
+            foreign_keys:
+              - column: model_id
+                references: ml_models(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: model_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to ml_models
+              - name: evaluation_date
+                type: date
+                nullable: false
+                comment: Date of evaluation
+              - name: accuracy
+                type: numeric
+                nullable: true
+                comment: Model accuracy metric
+              - name: precision
+                type: numeric
+                nullable: true
+                comment: Model precision metric
+              - name: recall
+                type: numeric
+                nullable: true
+                comment: Model recall metric
+              - name: f1_score
+                type: numeric
+                nullable: true
+                comment: Model F1 score
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: training_data_snapshots
+            description: |
+              Frozen training data versions for model reproducibility. Links model
+              versions to exact training data for compliance and debugging.
+            row_estimate: 100+
+            primary_key: id
+            foreign_keys:
+              - column: model_id
+                references: ml_models(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: snapshot_id
+                type: varchar(255)
+                nullable: false
+                comment: Unique snapshot identifier
+              - name: model_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to ml_models
+              - name: record_count
+                type: integer
+                nullable: false
+                comment: Number of records in training data
+              - name: created_at
+                type: timestamp
+                nullable: false
+                comment: When snapshot was created
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: fraud_feedback_loop
+            description: |
+              Ground truth feedback for ML model improvement. Captures human review
+              decisions to retrain models and improve accuracy over time.
+            row_estimate: 1000000+
+            primary_key: id
+            foreign_keys:
+              - column: fraud_score_id
+                references: fraud_scores(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: fraud_score_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to fraud_scores
+              - name: human_decision
+                type: varchar(50)
+                nullable: false
+                comment: Human reviewer decision (fraud, legitimate)
+              - name: model_decision
+                type: varchar(50)
+                nullable: false
+                comment: Original ML model decision
+              - name: was_correct
+                type: boolean
+                nullable: false
+                comment: Whether model prediction matched human decision
+              - name: feedback_date
+                type: timestamp
+                nullable: false
+                comment: When feedback was recorded
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+  # =============================================================================
+  # DP_AI_SERVICES - AI Agent Management & Orchestration
+  # =============================================================================
+  - name: dp_ai_services
+    description: |
+      AI agent management and workflow orchestration. Coordinates LangChain/LangGraph
+      AI agents for complex document processing workflows. Manages agent state,
+      checkpoints, and analytics for multi-step AI reasoning tasks.
+
+    table_count: 7
+    primary_technology: Python with LangChain/LangGraph
+    cross_database_links:
+      - Orchestrates document processing for fraud_postgresql documents
+      - Coordinates with dp_document_intelligence for structured extraction
+      - Provides agent analytics for monitoring and optimization
+
+    schemas:
+      - name: public
+        description: AI agent orchestration tables
+        tables:
+          - name: agent_threads
+            description: |
+              AI agent conversation threads. Tracks multi-turn agent interactions
+              with stateful context for complex reasoning workflows.
+            row_estimate: 1000000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: thread_id
+                type: varchar(255)
+                nullable: false
+                comment: Unique thread identifier
+              - name: agent_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of AI agent executing
+              - name: status
+                type: varchar(50)
+                nullable: false
+                comment: Thread status (running, completed, failed, paused)
+              - name: started_at
+                type: timestamp
+                nullable: false
+                comment: When thread execution started
+              - name: completed_at
+                type: timestamp
+                nullable: true
+                comment: When thread execution completed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: agent_checkpoints
+            description: |
+              LangGraph workflow checkpoints. Stores agent state at each step for
+              resume capability and debugging of multi-step AI workflows.
+            row_estimate: 5000000+
+            primary_key: id
+            foreign_keys:
+              - column: thread_id
+                references: agent_threads(thread_id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: thread_id
+                type: varchar(255)
+                nullable: false
+                comment: Foreign key to agent_threads (thread_id column)
+              - name: checkpoint_id
+                type: varchar(255)
+                nullable: false
+                comment: Unique checkpoint identifier
+              - name: step_name
+                type: varchar(255)
+                nullable: false
+                comment: Name of workflow step
+              - name: state_json
+                type: jsonb
+                nullable: false
+                comment: Serialized agent state at this checkpoint
+              - name: created_at
+                type: timestamp
+                nullable: false
+                comment: When checkpoint was created
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: checkpoint_analytics_view
+            description: |
+              Pre-computed analytics on agent execution patterns. Aggregates agent
+              performance, error rates, and execution times by agent type and variant.
+            row_estimate: 100000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: agent_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of AI agent
+              - name: variant_name
+                type: varchar(100)
+                nullable: true
+                comment: Agent variant or configuration name
+              - name: avg_duration_ms
+                type: integer
+                nullable: true
+                comment: Average execution duration in milliseconds
+              - name: success_rate
+                type: numeric
+                nullable: true
+                comment: Success rate percentage (0.0-100.0)
+              - name: error_count
+                type: integer
+                nullable: false
+                default: 0
+                comment: Total number of errors
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: agent_configurations
+            description: |
+              AI agent configuration management. Stores agent prompts, model selection,
+              temperature settings, and tool configurations per agent type.
+            row_estimate: 100+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: agent_name
+                type: varchar(255)
+                nullable: false
+                comment: Unique agent configuration name
+              - name: model_provider
+                type: varchar(100)
+                nullable: false
+                comment: AI model provider (openai, anthropic, etc.)
+              - name: model_name
+                type: varchar(100)
+                nullable: false
+                comment: Specific model name (gpt-4, claude-3-opus, etc.)
+              - name: prompt_template
+                type: text
+                nullable: false
+                comment: Agent prompt template
+              - name: config_json
+                type: jsonb
+                nullable: true
+                comment: Additional configuration (temperature, max_tokens, tools, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: agent_tool_calls
+            description: |
+              Log of agent tool invocations. Records every function call made by
+              agents (database queries, API calls, calculations) for audit and debug.
+            row_estimate: 10000000+
+            primary_key: id
+            foreign_keys:
+              - column: thread_id
+                references: agent_threads(thread_id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: thread_id
+                type: varchar(255)
+                nullable: false
+                comment: Foreign key to agent_threads (thread_id column)
+              - name: tool_name
+                type: varchar(255)
+                nullable: false
+                comment: Name of tool/function called
+              - name: arguments_json
+                type: jsonb
+                nullable: true
+                comment: Tool call arguments as JSON
+              - name: result_json
+                type: jsonb
+                nullable: true
+                comment: Tool call result as JSON
+              - name: called_at
+                type: timestamp
+                nullable: false
+                comment: When tool was called
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: agent_errors
+            description: |
+              Agent execution errors and failures. Captures error stack traces,
+              retry attempts, and resolution for AI workflow debugging.
+            row_estimate: 500000+
+            primary_key: id
+            foreign_keys:
+              - column: thread_id
+                references: agent_threads(thread_id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: thread_id
+                type: varchar(255)
+                nullable: false
+                comment: Foreign key to agent_threads (thread_id column)
+              - name: error_type
+                type: varchar(100)
+                nullable: false
+                comment: Type of error (timeout, api_error, validation_error, etc.)
+              - name: error_message
+                type: text
+                nullable: false
+                comment: Error message
+              - name: stack_trace
+                type: text
+                nullable: true
+                comment: Full error stack trace
+              - name: occurred_at
+                type: timestamp
+                nullable: false
+                comment: When error occurred
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: agent_cost_tracking
+            description: |
+              AI model API cost tracking. Monitors token usage and costs per agent
+              execution for budget management and optimization.
+            row_estimate: 1000000+
+            primary_key: id
+            foreign_keys:
+              - column: thread_id
+                references: agent_threads(thread_id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: thread_id
+                type: varchar(255)
+                nullable: false
+                comment: Foreign key to agent_threads (thread_id column)
+              - name: model_provider
+                type: varchar(100)
+                nullable: false
+                comment: AI model provider (openai, anthropic, etc.)
+              - name: tokens_used
+                type: integer
+                nullable: false
+                comment: Total tokens consumed
+              - name: estimated_cost_usd
+                type: numeric
+                nullable: false
+                comment: Estimated cost in USD
+              - name: logged_at
+                type: timestamp
+                nullable: false
+                comment: When cost was logged
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+  # =============================================================================
+  # AX_POSTGRES - Applicant Experience & Argyle Integration
+  # =============================================================================
+  - name: ax_postgres
+    description: |
+      Applicant Experience platform database. Manages applicant identity, submissions,
+      and integrations with Argyle (connected payroll and bank linking). Handles
+      document exhibits, source tracking, and API authentication for applicant-facing
+      services.
+
+    table_count: 11
+    primary_technology: TypeScript/Node.js with TypeORM
+    cross_database_links:
+      - Applicant data syncs with fraud_postgresql for verification workflows
+      - Document sources feed into fraud_postgresql document processing
+      - Identity verification results flow back from fraud_postgresql
+
+    schemas:
+      - name: public
+        description: Main schema for applicant experience tables
+        tables:
+          - name: applicants
+            description: |
+              Core applicant identity records. Stores applicant personal information
+              and links to identity verification systems.
+            row_estimate: 1600000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_name
+                type: jsonb
+                nullable: true
+                comment: Structured applicant name (first, middle, last)
+              - name: identity_id
+                type: uuid
+                nullable: true
+                comment: Reference to identity verification system
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: applicant_submissions
+            description: |
+              Applicant submission records. Tracks when applicants submit their
+              documents and information for verification.
+            row_estimate: 1600000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: applicant_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to applicants
+              - name: submitted_time
+                type: timestamp
+                nullable: false
+                comment: When submission was completed
+              - name: identity_id
+                type: uuid
+                nullable: true
+                comment: Reference to identity verification system
+              - name: should_notify_applicant
+                type: boolean
+                nullable: false
+                default: true
+                comment: Whether to send notification emails to applicant
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: applicant_submission_document_sources
+            description: |
+              Document source tracking for submissions. Records how documents were
+              provided (manual upload, Argyle connected payroll, bank linking, etc.).
+            row_estimate: 1700000+
+            primary_key: id
+            foreign_keys:
+              - column: submission_id
+                references: applicant_submissions(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: submission_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to applicant_submissions
+              - name: source_type
+                type: varchar
+                nullable: false
+                comment: Document source type (CONNECTED_PAYROLL, BANK_LINKING, MANUAL_UPLOAD, etc.)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: argyle_users
+            description: |
+              Argyle user accounts linked to applicants. Argyle provides connected
+              payroll and bank account data through their API.
+            row_estimate: 870000+
+            primary_key: id
+            foreign_keys:
+              - column: applicant_id
+                references: applicants(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: argyle_id
+                type: uuid
+                nullable: false
+                comment: Argyle user ID from Argyle API
+              - name: applicant_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to applicants
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: argyle_accounts
+            description: |
+              Argyle connected accounts (bank accounts, payroll systems). Stores
+              account metadata from connected institutions.
+            row_estimate: 190000+
+            primary_key: id
+            foreign_keys:
+              - column: argyle_user_id
+                references: argyle_users(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: account_id
+                type: uuid
+                nullable: false
+                comment: Argyle account ID from Argyle API
+              - name: argyle_user_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to argyle_users
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: argyle_documents
+            description: |
+              Documents retrieved from Argyle (paystubs, W2s, etc.). Stores document
+              metadata and links to document source tracking.
+            row_estimate: 140000+
+            primary_key: id
+            foreign_keys:
+              - column: argyle_user_id
+                references: argyle_users(id)
+              - column: applicant_submission_document_source_id
+                references: applicant_submission_document_sources(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: document
+                type: jsonb
+                nullable: false
+                comment: Document metadata from Argyle API
+              - name: argyle_user_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to argyle_users
+              - name: applicant_submission_document_source_id
+                type: uuid
+                nullable: true
+                comment: Foreign key to applicant_submission_document_sources
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: argyle_employments
+            description: |
+              Employment records from Argyle connected payroll. Stores employment
+              history and current employer information.
+            row_estimate: 70000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: employments
+                type: jsonb
+                nullable: false
+                comment: Employment data from Argyle API
+              - name: argyle_user_id
+                type: varchar
+                nullable: false
+                comment: Argyle user ID (stored as string in this table)
+              - name: applicant_submission_document_source_id
+                type: varchar
+                nullable: false
+                comment: Document source ID (stored as string in this table)
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+          - name: exhibits
+            description: |
+              Document exhibits for applicant submissions. Represents individual
+              documents or data items submitted by applicants.
+            row_estimate: 22000+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: external_id
+                type: varchar
+                nullable: true
+                comment: External system identifier for exhibit
+              - name: document_source_id
+                type: uuid
+                nullable: true
+                comment: Reference to document source
+              - name: identity_id
+                type: uuid
+                nullable: true
+                comment: Reference to identity verification system
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: exhibit_data
+            description: |
+              Exhibit data storage. Stores structured data and file references
+              for document exhibits.
+            row_estimate: 21000+
+            primary_key: id
+            foreign_keys:
+              - column: exhibit_id
+                references: exhibits(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: exhibit_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to exhibits
+              - name: type
+                type: varchar
+                nullable: false
+                comment: Exhibit data type (document, structured_data, etc.)
+              - name: data
+                type: jsonb
+                nullable: true
+                comment: Structured exhibit data
+              - name: file_uri
+                type: varchar
+                nullable: true
+                comment: S3 or file storage URI for exhibit file
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: exhibit_statuses
+            description: |
+              Exhibit processing status tracking. Monitors exhibit processing
+              workflow and captures errors.
+            row_estimate: 45000+
+            primary_key: id
+            foreign_keys:
+              - column: exhibit_id
+                references: exhibits(id)
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: exhibit_id
+                type: uuid
+                nullable: false
+                comment: Foreign key to exhibits
+              - name: status
+                type: varchar
+                nullable: true
+                comment: Processing status (pending, processing, completed, failed)
+              - name: error
+                type: varchar
+                nullable: true
+                comment: Error message if processing failed
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+
+          - name: api_keys
+            description: |
+              API authentication keys. Manages API keys for external integrations
+              and applicant-facing services.
+            row_estimate: 10+
+            primary_key: id
+            columns:
+              - name: id
+                type: uuid
+                nullable: false
+                comment: Primary key
+              - name: key
+                type: varchar
+                nullable: false
+                comment: API key value (hashed)
+              - name: description
+                type: varchar
+                nullable: false
+                comment: Description of API key purpose
+              - name: is_active
+                type: boolean
+                nullable: false
+                comment: Whether API key is currently active
+              - name: deleted_at
+                type: timestamp
+                nullable: true
+                comment: Soft delete timestamp
+              - name: inserted_at
+                type: timestamp
+                nullable: false
+                comment: Record creation timestamp
+              - name: updated_at
+                type: timestamp
+                nullable: false
+                comment: Last update timestamp
+
+# =============================================================================
+# METADATA & DOCUMENTATION
+# =============================================================================
+metadata:
+  version: "1.1"
+  generated_date: "2025-11-26"
+  total_catalogs: 7
+  total_tables: 123
+  documentation_coverage: "100%"
+
+  related_documentation:
+    - CORE_ENTITY_MODEL.md - Detailed foundation tables documentation
+    - FRAUD_DETECTION_WORKFLOW.md - Fraud workflow deep dive
+    - VERIFICATION_WORKFLOWS.md - Income/Asset/Identity/Rent verification details
+    - REVIEW_QUEUE_SYSTEM.md - Review queue and audit system
+    - FEATURES_CONFIGURATION.md - Feature flags and A/B testing
+    - INTEGRATION_LAYER.md - Webhooks and PMS integration
+    - DISPUTES_WORKFLOW.md - Dispute management
+    - FREQUENT_FLYER_DETECTION.md - Repeat applicant detection
+    - ENTERPRISE_INTEGRATION_DATABASE.md - Enterprise services database
+    - DP_INCOME_VALIDATION.md - Income microservice
+    - DP_DOCUMENT_INTELLIGENCE.md - Document AI microservice
+    - AV_POSTGRES.md - ML fraud scoring microservice
+    - DP_AI_SERVICES.md - AI agent orchestration
+    - CROSS_DATABASE_RELATIONSHIPS.md - Cross-database foreign key map
+    - ERD_DIAGRAMS.md - Visual entity-relationship diagrams
+
+  key_patterns:
+    primary_keys: "UUID for all major entities, auto-increment for result tables"
+    timestamps: "inserted_at/updated_at pattern throughout (Elixir convention)"
+    soft_deletes: "deleted_at timestamps + dedicated backup tables"
+    jsonb_usage: "Extensive use for flexible schemas, API payloads, and metadata"
+    cross_database_refs: "Foreign keys span databases via property_id, applicant_id"
+
+  naming_conventions:
+    tables: "snake_case, plural nouns (applicants, properties, fraud_submissions)"
+    columns: "snake_case (first_name, created_at, fraud_detection_enabled_c)"
+    foreign_keys: "{table}_id pattern (property_id, user_id, applicant_id)"
+    junction_tables: "{table1}_{table2} (users_properties, property_owners)"
+
+  technology_stack:
+    fraud_postgresql: "Elixir/Phoenix + Ecto ORM"
+    enterprise_postgresql: "TypeScript/Node.js + TypeORM"
+    dp_income_validation: "Python + SQLAlchemy"
+    dp_document_intelligence: "Python + LangChain + AI/ML libraries"
+    av_postgres: "Python + ML frameworks (scikit-learn, TensorFlow)"
+    dp_ai_services: "Python + LangChain + LangGraph"
+
+# =============================================================================
+# END OF DATABASE CATALOG
+# =============================================================================
