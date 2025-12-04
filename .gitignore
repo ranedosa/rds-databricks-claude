@@ -66,3 +66,9 @@ htmlcov/
 
 # OS specific
 Thumbs.db
+
+# Salesforce property sync documentation (contains API tokens in examples)
+salesforce_property_sync/BACKFILL_QUICKSTART.md
+salesforce_property_sync/docs/PHASE_1_QUICKSTART.md
+salesforce_property_sync/docs/URGENT_feature_backfill_required.md
+salesforce_property_sync/docs/census_databricks_notebook_setup.md
