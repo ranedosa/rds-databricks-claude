@@ -1,5 +1,8 @@
 # RDS Databricks Migration & Analysis Project
 
+> **Branch: feature/database-erd**
+> This branch contains comprehensive database Entity Relationship Diagram (ERD) documentation and Genie query instructions for Snappt's multi-database platform. Includes normalized database catalog with AX integration, cross-database relationship mapping, and SQL query patterns for 7 interconnected PostgreSQL databases (fraud_postgresql, ax_postgres, enterprise_postgresql, dp_income_validation, dp_document_intelligence, av_postgres, dp_ai_services).
+
 A comprehensive toolkit for migrating RDS workflows to Databricks Delta Live Tables (DLT) and performing workspace audits, data validation, and cost analysis.
 
 ## Overview
