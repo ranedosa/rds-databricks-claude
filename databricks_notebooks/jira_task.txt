@@ -1,0 +1,58 @@
+Meghan Sayre:
+Team, sharing the reporting ask we just received from Pegasus. Appreciate the help here.
+They are looking for reports with the following during bank linking beta and beyond:
+Frequency
+Weekly reports during the beta phase
+Monthly reports long term for Senior Leadership
+What must be included
+Clear view of bank linking adoption and usage
+Number of applications run through bank linking
+Number of applications run through ID verification (these should closely correlate)
+Pass / Fail recommendations tied to outcomes
+Clear indication of whether the program is being used as intended
+Visibility into decisions made
+Callouts for any glitches or issues, if present
+Questions we need to answer internally
+What of this can we already deliver today?
+What would require new reporting or customization?
+What cadence and format make the most sense (PDF, dashboard export, etc.)?
+How do we operationalize this so it goes out automatically on a weekly and monthly basis?
+Thanks in advance. Let’s align on scope and feasibility so we can set clear expectations with the client.
+
+
+
+Meghan Sayre
+  4:47 PM
+just adding on that they are looking for applicant level data
+
+
+
+Dane Rosa
+  10:15 AM
+For the action items:
+Clear view of bank linking adoption and usage
+Number of applications run through bank linking
+Number of applications run through ID verification (these should closely correlate)
+Pass / Fail recommendations tied to outcomes
+Is the data within our BAL dashboard: /Users/danerosa/rds_databricks_claude/databricks_dashboards/Bank Account Linking Dashboard.lvdash.json sufficient?
+For the additional items we'll need your help to identify the logic we can build in:
+Clear indication of whether the program is being used as intended
+how would you define if the program is being used as intended
+Visibility into decisions made
+Can you elaborate on this?
+Callouts for any glitches or issues, if present
+Is this failed BAL connections?
+
+
+Daniel Cooper
+I think this data is sufficient. I think what they are looking for in the grand scheme would be an applicant view that shows what feature they were run through. So each applicant would should:
+IDV: :white_check_mark:
+Bank Linking: :white_check_mark:
+Connected Payroll: :x:
+Bank Statements: :x:
+Pay Stubs: :white_check_mark:
+Ruling: Pass/Fail and a reason
+The reasoning might be a lot to add so maybe just this part to start
+I think the first page of the report would just show percetages and numbers of the time each tool was used followed by an applicant by applicant report is my dream state. Not sure how feasable that is though
+This is my take on what they are asking for. Happy to connect and discuss. @Frank Fico or @Meghan Sayre let me know if you have a different take (edited) 
+

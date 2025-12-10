@@ -1,0 +1,1 @@
+some mcp connections are within ~/.claude.json
