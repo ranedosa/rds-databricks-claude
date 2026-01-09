@@ -1,0 +1,799 @@
+{
+  "id": 3326072,
+  "label": null,
+  "schedule_frequency": "never",
+  "schedule_day": null,
+  "schedule_hour": null,
+  "schedule_minute": null,
+  "cron_expression": null,
+  "created_at": "2025-11-21T20:17:52.542Z",
+  "updated_at": "2026-01-05T11:03:20.931Z",
+  "operation": "upsert",
+  "paused": false,
+  "status": "Up to Date",
+  "lead_union_insert_to": null,
+  "field_behavior": "specific_properties",
+  "field_normalization": null,
+  "field_order": null,
+  "mirror_strategy": null,
+  "sync_behavior_family": "mapRecords",
+  "advanced_configuration": {
+    "bulk_id_lookup": true
+  },
+  "resource_identifier": "sync:databricks-new-properties-with-features-salesforce-product-property",
+  "instant_mode": null,
+  "dbt_cloud_project_id": null,
+  "dbt_cloud_job_id": null,
+  "failed_run_notifications_enabled": true,
+  "failed_record_notifications_enabled": true,
+  "failed_record_notifications_threshold_percent": 75,
+  "source_attributes": {
+    "connection_id": 58981,
+    "object": {
+      "type": "business_object_source",
+      "source_object_id": 2534881,
+      "id": 2428264,
+      "name": "new_properties_with_features",
+      "created_at": "2025-11-21T20:16:16.285Z",
+      "updated_at": "2025-11-21T20:16:16.285Z",
+      "description": null,
+      "approved": false,
+      "dataset_id": 119445,
+      "resource_identifier": "model:new-properties-with-features",
+      "query": "SELECT * FROM `crm`.`sfdc_dbx`.`new_properties_with_features`",
+      "columns": [
+        {
+          "name": "snappt_property_id_c",
+          "type": "string"
+        },
+        {
+          "name": "reverse_etl_id_c",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "entity_name_c",
+          "type": "string"
+        },
+        {
+          "name": "address_street_s",
+          "type": "string"
+        },
+        {
+          "name": "address_city_s",
+          "type": "string"
+        },
+        {
+          "name": "address_state_code_s",
+          "type": "string"
+        },
+        {
+          "name": "address_postal_code_s",
+          "type": "string"
+        },
+        {
+          "name": "phone_c",
+          "type": "string"
+        },
+        {
+          "name": "email_c",
+          "type": "string"
+        },
+        {
+          "name": "website_c",
+          "type": "string"
+        },
+        {
+          "name": "logo_c",
+          "type": "string"
+        },
+        {
+          "name": "unit_c",
+          "type": "int"
+        },
+        {
+          "name": "status_c",
+          "type": "string"
+        },
+        {
+          "name": "company_id_c",
+          "type": "string"
+        },
+        {
+          "name": "company_short_id_c",
+          "type": "string"
+        },
+        {
+          "name": "short_id_c",
+          "type": "string"
+        },
+        {
+          "name": "bank_statement_c",
+          "type": "int"
+        },
+        {
+          "name": "paystub_c",
+          "type": "int"
+        },
+        {
+          "name": "unit_is_required_c",
+          "type": "boolean"
+        },
+        {
+          "name": "phone_is_required_c",
+          "type": "boolean"
+        },
+        {
+          "name": "identity_verification_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "fraud_detection_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "fraud_detection_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "fraud_detection_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "income_verification_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "income_verification_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "income_verification_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "id_verification_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "id_verification_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "id_verification_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "idv_only_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "idv_only_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "idv_only_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "connected_payroll_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "connected_payroll_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "connected_payroll_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "bank_linking_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "bank_linking_start_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "bank_linking_updated_date_c",
+          "type": "timestamp"
+        },
+        {
+          "name": "verification_of_rent_enabled_c",
+          "type": "boolean"
+        },
+        {
+          "name": "vor_start_date_c",
+          "type": "date"
+        },
+        {
+          "name": "vor_updated_date_c",
+          "type": "date"
+        },
+        {
+          "name": "not_orphan_record_c",
+          "type": "boolean"
+        },
+        {
+          "name": "trigger_rollups_c",
+          "type": "boolean"
+        }
+      ],
+      "dataset_id=": 119445
+    }
+  },
+  "destination_attributes": {
+    "connection_id": 703012,
+    "object": "Product_Property__c"
+  },
+  "mappings": [
+    {
+      "from": {
+        "type": "column",
+        "data": "short_id_c"
+      },
+      "to": "Short_ID__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "id_verification_enabled_c"
+      },
+      "to": "ID_Verification_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "company_short_id_c"
+      },
+      "to": "Company_Short_ID__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "paystub_c"
+      },
+      "to": "Paystub__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "snappt_property_id_c"
+      },
+      "to": "Snappt_Property_ID__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "idv_only_start_date_c"
+      },
+      "to": "IDV_Only_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "fraud_detection_start_date_c"
+      },
+      "to": "Fraud_Detection_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "email_c"
+      },
+      "to": "Email__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "idv_only_enabled_c"
+      },
+      "to": "IDV_Only_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "bank_linking_updated_date_c"
+      },
+      "to": "Bank_Linking_Updated_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "name"
+      },
+      "to": "Name",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "income_verification_start_date_c"
+      },
+      "to": "Income_Verification_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "bank_linking_start_date_c"
+      },
+      "to": "Bank_Linking_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "status_c"
+      },
+      "to": "Status__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "income_verification_updated_date_c"
+      },
+      "to": "Income_Verification_Updated_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "id_verification_start_date_c"
+      },
+      "to": "ID_Verification_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "company_id_c"
+      },
+      "to": "Company_ID__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "connected_payroll_start_date_c"
+      },
+      "to": "Connected_Payroll_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "address_city_s"
+      },
+      "to": "Address__City__s",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "vor_updated_date_c"
+      },
+      "to": "VOR_Updated_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "phone_is_required_c"
+      },
+      "to": "Phone_is_Required__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "website_c"
+      },
+      "to": "Website__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "bank_statement_c"
+      },
+      "to": "Bank_Statement__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "bank_linking_enabled_c"
+      },
+      "to": "Bank_Linking_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "not_orphan_record_c"
+      },
+      "to": "Not_Orphan_Record__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "connected_payroll_updated_date_c"
+      },
+      "to": "Connected_Payroll_Updated_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "vor_start_date_c"
+      },
+      "to": "VOR_Start_Date__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "verification_of_rent_enabled_c"
+      },
+      "to": "Verification_of_Rent_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "logo_c"
+      },
+      "to": "Logo__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "identity_verification_enabled_c"
+      },
+      "to": "Identity_Verification_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "income_verification_enabled_c"
+      },
+      "to": "Income_Verification_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "phone_c"
+      },
+      "to": "Phone__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "fraud_detection_enabled_c"
+      },
+      "to": "Fraud_Detection_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "unit_c"
+      },
+      "to": "Unit__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "reverse_etl_id_c"
+      },
+      "to": "Reverse_ETL_ID__c",
+      "is_primary_identifier": true,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "address_postal_code_s"
+      },
+      "to": "Address__PostalCode__s",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "unit_is_required_c"
+      },
+      "to": "Unit_is_Required__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "entity_name_c"
+      },
+      "to": "Entity_Name__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "address_street_s"
+      },
+      "to": "Address__Street__s",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "connected_payroll_enabled_c"
+      },
+      "to": "Connected_Payroll_Enabled__c",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    },
+    {
+      "from": {
+        "type": "column",
+        "data": "address_state_code_s"
+      },
+      "to": "Address__StateCode__s",
+      "is_primary_identifier": false,
+      "generate_field": false,
+      "preserve_values": false,
+      "operation": null,
+      "sync_null_values": true,
+      "follow_source_type": false
+    }
+  ],
+  "alert_attributes": [
+    {
+      "id": 796258,
+      "options": {},
+      "send_for": "first_time",
+      "should_send_recovery": true,
+      "type": "FailureAlertConfiguration"
+    },
+    {
+      "id": 796259,
+      "options": {
+        "threshold": 75
+      },
+      "send_for": "first_time",
+      "should_send_recovery": true,
+      "type": "InvalidRecordPercentAlertConfiguration"
+    }
+  ],
+  "high_water_mark_attribute": null,
+  "mode": {
+    "type": "triggered",
+    "triggers": {
+      "schedule": {
+        "frequency": "never",
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "cron_expression": null
+      }
+    }
+  }
+}

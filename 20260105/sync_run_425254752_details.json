@@ -1,0 +1,29 @@
+{
+    "status": "success",
+    "data": {
+        "id": 425254752,
+        "created_at": "2026-01-07T20:44:28.293Z",
+        "updated_at": "2026-01-07T20:48:45.251Z",
+        "completed_at": "2026-01-07T20:45:04.273Z",
+        "error_code": null,
+        "error_message": null,
+        "error_detail": null,
+        "status": "completed",
+        "sync_id": 3394041,
+        "source_record_count": 50,
+        "source_record_updates": 50,
+        "source_record_deletes": 0,
+        "source_record_invalids": 0,
+        "records_invalid": 0,
+        "records_processed": 50,
+        "records_updated": 50,
+        "records_failed": 0,
+        "scheduled_execution_time": null,
+        "canceled": false,
+        "full_sync": true,
+        "sync_trigger_reason": {
+            "ui_tag": "API Request",
+            "ui_detail": "Sync was triggered by an API request"
+        }
+    }
+}

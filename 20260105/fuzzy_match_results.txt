@@ -1,0 +1,332 @@
+[WARN] pyarrow is not installed by default since databricks-sql-connector 4.0.0,any arrow specific api (e.g. fetchmany_arrow) and cloud fetch will be disabled.If you need these features, please run pip install pyarrow or pip install databricks-sql-connector[pyarrow] to install
+
+================================================================================
+FUZZY MATCH SEARCH - Production Property__c Schema
+================================================================================
+
+Searching for columns that might be receiving feature flag data...
+Looking for variations of: IDV, Bank Linking, Payroll, Income, Fraud
+
+Total columns in production: 205
+
+
+================================================================================
+🔍 Searching for: IDV / ID Verification
+   Keywords: id, idv, identity, verification, verify
+================================================================================
+
+✓ Found 15 potential matches:
+
+  Column: id
+  Type: string
+  Matched: id
+  Sample data:
+    - a01Dn00000HHpCDIA1 (1 records)
+    - a01UL00000d5nzLYAQ (1 records)
+    - a01UL00000d64AXYAY (1 records)
+    - a01Dn00000HHG72IAH (1 records)
+    - a01UL00000bXk3iYAC (1 records)
+
+  Column: created_by_id
+  Type: string
+  Matched: id
+  Sample data:
+    - 005UL000000sdqnYAA (253 records)
+    - 005Dn000007ffVrIAI (4 records)
+    - 005Dn000007ff7UIAQ (271 records)
+    - 005Dn000007ffV8IAI (28 records)
+    - 005UL0000021Ry0YAE (1429 records)
+
+  Column: last_modified_by_id
+  Type: string
+  Matched: id
+  Sample data:
+    - 005UL000003NKHHYA4 (9 records)
+    - 005UL00000EzvsYYAR (28 records)
+    - 005UL000003fEwXYAU (77 records)
+    - 005UL00000E9xqPYAR (437 records)
+    - 005UL000009L2WJYA0 (1 records)
+
+  Column: aln_property_id_c
+  Type: string
+  Matched: id
+  Sample data:
+    - a828de63-5d60-42af-a817-c5c0fc75dd04 (1 records)
+    - ace82927-e1ee-4ecd-9801-fd5f5ea51590 (1 records)
+    - a503bbba-eb07-4a9e-b1c6-7d6968a20379 (1 records)
+    - a3231ad2-29ab-4501-87e4-a01f4694200b (1 records)
+    - a62ae95a-d055-40c3-bb42-6ce07cfdc383 (1 records)
+
+  Column: hubspot_id_2_c
+  Type: double
+  Matched: id
+  Sample data:
+    (Could not retrieve samples)
+
+  Column: hs_child_company_id_c
+  Type: string
+  Matched: id
+  Sample data:
+    - 10028738664 (1 records)
+    - 9128688006 (1 records)
+    - 10539716519 (1 records)
+    - 15406996764 (1 records)
+    - 15374810510 (1 records)
+
+  Column: hs_parent_company_id_c
+  Type: string
+  Matched: id
+  Sample data:
+    - 7675852179 (10 records)
+    - 1034421023 (4 records)
+    - 1050242984 (3 records)
+    - 7675829398 (5 records)
+    - 7675824462 (2 records)
+
+  Column: snappt_property_id_c
+  Type: string
+  Matched: id
+  Sample data:
+    - 8PmAilQuCV (1 records)
+    - SWelAiNSZz (1 records)
+    - 0zWvHdao8r (1 records)
+    - exrhQU14WU (1 records)
+    - FeX1C8duEn (1 records)
+
+  Column: fde_property_id_c
+  Type: string
+  Matched: id
+  Sample data:
+    - 5232b1e8-9f97-4dfa-875a-dfcbac4b49ad (1 records)
+    - b60bf520-f3f8-4345-8e48-224453db33c1 (1 records)
+    - 5e0e5920-a871-430b-ad34-447bfa797348 (1 records)
+    - 6187fa65-81c5-46fc-a33b-9ac40fc24be3 (1 records)
+    - 9812097a-0c7e-4383-b650-5b6c40fb67d9 (1 records)
+
+  Column: id_verification_opt_in_c
+  Type: boolean
+  Matched: id, verification
+  Sample data:
+    - True (3954 records)
+    - False (213676 records)
+
+  Column: income_verification_opt_in_c
+  Type: boolean
+  Matched: verification
+  Sample data:
+    - True (5530 records)
+    - False (212100 records)
+
+  Column: id_verification_enabled_c
+  Type: boolean
+  Matched: id, verification
+  Sample data:
+    - True (4414 records)
+    - False (213216 records)
+
+  Column: income_verification_enabled_c
+  Type: boolean
+  Matched: verification
+  Sample data:
+    - True (7205 records)
+    - False (210425 records)
+
+  Column: idv_start_date_c
+  Type: date
+  Matched: id, idv
+
+  Column: verification_of_rent_enabled_c
+  Type: boolean
+  Matched: verification
+  Sample data:
+    - False (15607 records)
+    - True (141 records)
+
+
+================================================================================
+🔍 Searching for: Bank Linking
+   Keywords: bank, banking, link, linking, plaid, financial
+================================================================================
+
+✓ Found 5 potential matches:
+
+  Column: hs_linked_in_bio_c
+  Type: string
+  Matched: link
+  Sample data:
+    - Cobblestone Village Apartments offers 1, 2 and 3-bedroom apartments for rent in Summerville. Check out our spacious floor plans and choose the one that suits you best! (1 records)
+    - Controlled Access | Covered Parking | Cozy Fireplaces | Hardwood Floors| Refrigerator | Central A/c (air conditioning) and Heat | Fireplace | Pool | Hot Tub/Spa | Laundry | Elevator | 14440 Dickens Street |Park Dickens in Los Angeles offers studio, o... (1 records)
+    - Discover our pet-friendly apartments! Hidden Creek Village Apartments offers 1, 2 and 3-bedroom apartments for rent in Fayetteville, NC. Contact us today! (1 records)
+    - SIMPSON PROPERTY GROUP® (SPG) is a wholly owned subsidiary of SIMPSON HOUSING®. Headquartered in Denver, CO, SPG is a fully integrated real estate firm providing services in multifamily & commercial property management, development & construction. (1 records)
+    - Controlled Access | Parking | Sauna | Hardwood Floors| Clubhouse | Fitness Center | Pool | BBQ | Air Conditioning | Gas Stove | Quartz | Microwave | Magnolia | 14358 Magnolia in Los Angeles offers studio, one, and two bedroom apartments for rent in She... (1 records)
+
+  Column: hs_linked_in_company_page_c
+  Type: string
+  Matched: link
+  Sample data:
+    - https://www.linkedin.com/company/r-e-carroll-management (1 records)
+    - https://www.linkedin.com/company/1410377 (1 records)
+    - https://www.linkedin.com/company/lincoln-property-company (1 records)
+    - https://www.linkedin.com/company/terra-group (1 records)
+    - https://www.linkedin.com/company/pulse-millenia-apartments (1 records)
+
+  Column: bank_linking_opt_in_c
+  Type: boolean
+  Matched: bank, link, linking
+  Sample data:
+    - False (16601 records)
+
+  Column: bank_linking_enabled_c
+  Type: boolean
+  Matched: bank, link, linking
+  Sample data:
+    - True (2387 records)
+    - False (14214 records)
+
+  Column: bank_linking_start_date_c
+  Type: date
+  Matched: bank, link, linking
+
+
+================================================================================
+🔍 Searching for: Payroll
+   Keywords: payroll, pay, salary, income
+================================================================================
+
+✓ Found 5 potential matches:
+
+  Column: income_verification_opt_in_c
+  Type: boolean
+  Matched: income
+  Sample data:
+    - True (5530 records)
+    - False (212100 records)
+
+  Column: connected_payroll_enabled_c
+  Type: boolean
+  Matched: payroll, pay
+  Sample data:
+    - True (6208 records)
+    - False (211422 records)
+
+  Column: income_verification_enabled_c
+  Type: boolean
+  Matched: income
+  Sample data:
+    - True (7205 records)
+    - False (210425 records)
+
+  Column: connected_payroll_opt_in_c
+  Type: boolean
+  Matched: payroll, pay
+  Sample data:
+    - True (5445 records)
+    - False (212178 records)
+
+  Column: connected_payroll_start_date_c
+  Type: date
+  Matched: payroll, pay
+
+
+================================================================================
+🔍 Searching for: Income Insights
+   Keywords: income, insight, insights, earning, revenue
+================================================================================
+
+✓ Found 2 potential matches:
+
+  Column: income_verification_opt_in_c
+  Type: boolean
+  Matched: income
+  Sample data:
+    - True (5530 records)
+    - False (212100 records)
+
+  Column: income_verification_enabled_c
+  Type: boolean
+  Matched: income
+  Sample data:
+    - True (7205 records)
+    - False (210425 records)
+
+
+================================================================================
+🔍 Searching for: Fraud Detection
+   Keywords: fraud, document, doc, detection, detect, risk
+================================================================================
+
+✓ Found 2 potential matches:
+
+  Column: fraud_detection_opt_in_c
+  Type: boolean
+  Matched: fraud, detection, detect
+  Sample data:
+    - True (9459 records)
+    - False (208171 records)
+
+  Column: fraud_detection_enabled_c
+  Type: boolean
+  Matched: fraud, detection, detect
+  Sample data:
+    - True (9409 records)
+    - False (208221 records)
+
+
+================================================================================
+SUMMARY OF FUZZY MATCHES
+================================================================================
+
+Total potential matches found: 29
+
+IDV / ID Verification:
+  • id (string)
+  • created_by_id (string)
+  • last_modified_by_id (string)
+  • aln_property_id_c (string)
+  • hubspot_id_2_c (double)
+  • hs_child_company_id_c (string)
+  • hs_parent_company_id_c (string)
+  • snappt_property_id_c (string)
+  • fde_property_id_c (string)
+  • id_verification_opt_in_c (boolean)
+  • income_verification_opt_in_c (boolean)
+  • id_verification_enabled_c (boolean)
+  • income_verification_enabled_c (boolean)
+  • idv_start_date_c (date)
+  • verification_of_rent_enabled_c (boolean)
+
+Bank Linking:
+  • hs_linked_in_bio_c (string)
+  • hs_linked_in_company_page_c (string)
+  • bank_linking_opt_in_c (boolean)
+  • bank_linking_enabled_c (boolean)
+  • bank_linking_start_date_c (date)
+
+Payroll:
+  • income_verification_opt_in_c (boolean)
+  • connected_payroll_enabled_c (boolean)
+  • income_verification_enabled_c (boolean)
+  • connected_payroll_opt_in_c (boolean)
+  • connected_payroll_start_date_c (date)
+
+Income Insights:
+  • income_verification_opt_in_c (boolean)
+  • income_verification_enabled_c (boolean)
+
+Fraud Detection:
+  • fraud_detection_opt_in_c (boolean)
+  • fraud_detection_enabled_c (boolean)
+
+
+================================================================================
+ANALYSIS
+================================================================================
+
+These columns might be:
+1. Receiving feature flag data with different naming
+2. Legacy columns from previous sync attempts
+3. Related but different fields (e.g., HubSpot, ALN)
+4. Coincidental name matches
+
+Next step: Compare actual data values in these columns
+with the feature flags we synced to staging.

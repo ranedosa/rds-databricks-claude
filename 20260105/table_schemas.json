@@ -1,0 +1,605 @@
+{
+  "rds_schema": {
+    "statement_id": "01f0ea79-ed6e-13bd-956d-3247f2a8223f",
+    "status": {
+      "state": "SUCCEEDED"
+    },
+    "manifest": {
+      "format": "JSON_ARRAY",
+      "schema": {
+        "column_count": 3,
+        "columns": [
+          {
+            "name": "col_name",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 0
+          },
+          {
+            "name": "data_type",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 1
+          },
+          {
+            "name": "comment",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 2
+          }
+        ]
+      },
+      "total_chunk_count": 1,
+      "chunks": [
+        {
+          "chunk_index": 0,
+          "row_offset": 0,
+          "row_count": 32
+        }
+      ],
+      "total_row_count": 32,
+      "truncated": false
+    },
+    "result": {
+      "chunk_index": 0,
+      "row_offset": 0,
+      "row_count": 32,
+      "data_array": [
+        [
+          "id",
+          "string",
+          "Unique identifier for the property."
+        ],
+        [
+          "name",
+          "string",
+          "Name of the property."
+        ],
+        [
+          "entity_name",
+          "string",
+          null
+        ],
+        [
+          "logo",
+          "string",
+          "url of the property logo"
+        ],
+        [
+          "phone",
+          "string",
+          "Contact phone number for the property."
+        ],
+        [
+          "website",
+          "string",
+          "Website address for the property."
+        ],
+        [
+          "unit",
+          "int",
+          "Represents the number of units in the property."
+        ],
+        [
+          "city",
+          "string",
+          "City where the property is located."
+        ],
+        [
+          "address",
+          "string",
+          "Full address of the property."
+        ],
+        [
+          "state",
+          "string",
+          "State where the property is located."
+        ],
+        [
+          "zip",
+          "string",
+          "Zip code of the property location."
+        ],
+        [
+          "status",
+          "string",
+          "Current status of the property."
+        ],
+        [
+          "inserted_at",
+          "timestamp",
+          "Timestamp when the property was inserted into the database."
+        ],
+        [
+          "updated_at",
+          "timestamp",
+          "Timestamp when the property was last updated."
+        ],
+        [
+          "company_short_id",
+          "string",
+          "Short identifier for the entity or organization that owns the property."
+        ],
+        [
+          "bank_statement",
+          "int",
+          null
+        ],
+        [
+          "paystub",
+          "int",
+          null
+        ],
+        [
+          "unit_is_required",
+          "boolean",
+          "Indicates if the number of units in the property is required."
+        ],
+        [
+          "phone_is_required",
+          "boolean",
+          "Indicates if the contact phone number for the property is required."
+        ],
+        [
+          "short_id",
+          "string",
+          "Short identifier for the property."
+        ],
+        [
+          "email",
+          "string",
+          "email associated with the property"
+        ],
+        [
+          "company_id",
+          "string",
+          null
+        ],
+        [
+          "textsearchable_index_col",
+          "string",
+          "Represents the column that is indexed for text search, enabling efficient search and filtering."
+        ],
+        [
+          "identity_verification_enabled",
+          "boolean",
+          "A boolean flag indicating whether identity verification is enabled for the user, allowing for secure access and permissions."
+        ],
+        [
+          "supported_doctypes",
+          "string",
+          "Specifies the document types that the user can interact with, providing a clear understanding of the user's capabilities."
+        ],
+        [
+          "identity_verification_report_image_types",
+          "string",
+          "Represents the image types that are accepted for identity verification reports, ensuring compatibility and accuracy."
+        ],
+        [
+          "pmc_name",
+          "string",
+          null
+        ],
+        [
+          "_fivetran_deleted",
+          "boolean",
+          null
+        ],
+        [
+          "_fivetran_synced",
+          "timestamp",
+          null
+        ],
+        [
+          "sfdc_id",
+          "string",
+          null
+        ],
+        [
+          "identity_verification_provider",
+          "string",
+          null
+        ],
+        [
+          "identity_verification_flow_types",
+          "string",
+          null
+        ]
+      ]
+    }
+  },
+  "sf_schema": {
+    "statement_id": "01f0ea79-eed7-1757-832c-d2e3a193a98b",
+    "status": {
+      "state": "SUCCEEDED"
+    },
+    "manifest": {
+      "format": "JSON_ARRAY",
+      "schema": {
+        "column_count": 3,
+        "columns": [
+          {
+            "name": "col_name",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 0
+          },
+          {
+            "name": "data_type",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 1
+          },
+          {
+            "name": "comment",
+            "type_text": "STRING",
+            "type_name": "STRING",
+            "position": 2
+          }
+        ]
+      },
+      "total_chunk_count": 1,
+      "chunks": [
+        {
+          "chunk_index": 0,
+          "row_offset": 0,
+          "row_count": 69
+        }
+      ],
+      "total_row_count": 69,
+      "truncated": false
+    },
+    "result": {
+      "chunk_index": 0,
+      "row_offset": 0,
+      "row_count": 69,
+      "data_array": [
+        [
+          "id",
+          "string",
+          null
+        ],
+        [
+          "owner_id",
+          "string",
+          null
+        ],
+        [
+          "is_deleted",
+          "boolean",
+          null
+        ],
+        [
+          "name",
+          "string",
+          null
+        ],
+        [
+          "created_date",
+          "timestamp",
+          null
+        ],
+        [
+          "created_by_id",
+          "string",
+          null
+        ],
+        [
+          "last_modified_date",
+          "timestamp",
+          null
+        ],
+        [
+          "last_modified_by_id",
+          "string",
+          null
+        ],
+        [
+          "system_modstamp",
+          "timestamp",
+          null
+        ],
+        [
+          "last_activity_date",
+          "date",
+          null
+        ],
+        [
+          "address_street_s",
+          "string",
+          null
+        ],
+        [
+          "address_city_s",
+          "string",
+          null
+        ],
+        [
+          "address_postal_code_s",
+          "string",
+          null
+        ],
+        [
+          "address_state_code_s",
+          "string",
+          null
+        ],
+        [
+          "address_country_code_s",
+          "string",
+          null
+        ],
+        [
+          "address_latitude_s",
+          "double",
+          null
+        ],
+        [
+          "address_longitude_s",
+          "double",
+          null
+        ],
+        [
+          "address_geocode_accuracy_s",
+          "string",
+          null
+        ],
+        [
+          "bank_statement_c",
+          "double",
+          null
+        ],
+        [
+          "company_id_c",
+          "string",
+          null
+        ],
+        [
+          "company_name_c",
+          "string",
+          null
+        ],
+        [
+          "company_short_id_c",
+          "string",
+          null
+        ],
+        [
+          "email_c",
+          "string",
+          null
+        ],
+        [
+          "entity_name_c",
+          "string",
+          null
+        ],
+        [
+          "identity_verification_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "logo_c",
+          "string",
+          null
+        ],
+        [
+          "match_product_property_count_c",
+          "double",
+          null
+        ],
+        [
+          "matched_by_date_c",
+          "date",
+          null
+        ],
+        [
+          "matched_by_c",
+          "string",
+          null
+        ],
+        [
+          "not_orphan_record_c",
+          "boolean",
+          null
+        ],
+        [
+          "paystub_c",
+          "double",
+          null
+        ],
+        [
+          "phone_c",
+          "string",
+          null
+        ],
+        [
+          "phone_is_required_c",
+          "boolean",
+          null
+        ],
+        [
+          "product_type_c",
+          "string",
+          null
+        ],
+        [
+          "reverse_etl_id_c",
+          "string",
+          null
+        ],
+        [
+          "sf_property_id_c",
+          "string",
+          null
+        ],
+        [
+          "short_id_c",
+          "string",
+          null
+        ],
+        [
+          "snappt_property_id_c",
+          "string",
+          null
+        ],
+        [
+          "status_c",
+          "string",
+          null
+        ],
+        [
+          "unit_c",
+          "double",
+          null
+        ],
+        [
+          "unit_is_required_c",
+          "boolean",
+          null
+        ],
+        [
+          "website_c",
+          "string",
+          null
+        ],
+        [
+          "fde_property_created_by_c",
+          "string",
+          null
+        ],
+        [
+          "fde_partner_property_c",
+          "boolean",
+          null
+        ],
+        [
+          "trigger_rollups_c",
+          "boolean",
+          null
+        ],
+        [
+          "_fivetran_deleted",
+          "boolean",
+          null
+        ],
+        [
+          "_fivetran_synced",
+          "timestamp",
+          null
+        ],
+        [
+          "fraud_detection_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "id_verification_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "income_verification_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "connected_payroll_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "connected_payroll_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "id_verification_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "fraud_detection_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "income_verification_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "idv_only_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "bank_linking_updated_date_c",
+          "date",
+          null
+        ],
+        [
+          "idv_only_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "bank_linking_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "connected_payroll_updated_date_c",
+          "date",
+          null
+        ],
+        [
+          "income_verification_updated_date_c",
+          "date",
+          null
+        ],
+        [
+          "bank_linking_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "exclude_from_flow_c",
+          "boolean",
+          null
+        ],
+        [
+          "predicted_churn_probability_c",
+          "double",
+          null
+        ],
+        [
+          "verification_of_rent_enabled_c",
+          "boolean",
+          null
+        ],
+        [
+          "vor_start_date_c",
+          "date",
+          null
+        ],
+        [
+          "vor_updated_date_c",
+          "date",
+          null
+        ],
+        [
+          "previous_month_submissions_c",
+          "double",
+          null
+        ],
+        [
+          "current_month_submissions_c",
+          "double",
+          null
+        ]
+      ]
+    }
+  }
+}

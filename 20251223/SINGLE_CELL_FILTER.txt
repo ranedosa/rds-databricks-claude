@@ -1,0 +1,39 @@
+%sql
+-- Final filtered results: Remove all excluded properties
+-- Copy this entire cell into your notebook
+
+WITH all_excluded_properties AS (
+    -- IDV web portal properties
+    SELECT DISTINCT p.id as property_id
+    FROM rds.pg_rds_public.properties p
+    LEFT JOIN rds.pg_rds_public.property_features pf ON pf.property_id = p.id
+    WHERE p.status = 'ACTIVE'
+      AND pf.feature_code = 'identity_verification_only_web_portal'
+
+    UNION
+
+    -- IDV only properties
+    SELECT DISTINCT property_id FROM idv_only
+
+    UNION
+
+    -- Partner properties
+    SELECT DISTINCT id as property_id FROM partner_properties
+
+    UNION
+
+    -- Test properties
+    SELECT DISTINCT property_id FROM test_properties
+
+    UNION
+
+    -- Phased out properties
+    SELECT DISTINCT property_id FROM phased_out_properties
+)
+-- Final filtered results
+SELECT
+    apc.*
+FROM active_properties_companies apc
+LEFT JOIN all_excluded_properties ex
+    ON apc.active_properties = ex.property_id
+WHERE ex.property_id IS NULL;

@@ -1,0 +1,17 @@
+Hi can I Get count of active properties, companies with active properties, and sum of units:
+
+answer: 
+%sql
+SELECT
+    COUNT(DISTINCT p.id) as active_properties,
+    COUNT(DISTINCT p.company_id) as companies_with_active_properties,    
+    SUM(p.unit) as total_units
+    FROM rds.pg_rds_public.properties p
+    WHERE p.status = 'ACTIVE';
+
+follow up: 
+Can we Exclude from the query:
+- IDV Only properties (duplicate properties on the platform)
+- Other partner properties not listed on the Customer Log
+- Test/demo properties that are listed as active
+Buildings that are phased out (123 Main St Phase 1, 123 Main St Phase 2)

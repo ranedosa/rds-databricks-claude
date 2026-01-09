@@ -1,0 +1,31 @@
+%sql
+-- Final aggregated counts (matching original format)
+-- This gives you the same 3 metrics as the first cell, but with exclusions applied
+
+WITH all_excluded_properties AS (
+    SELECT DISTINCT p.id as property_id
+    FROM rds.pg_rds_public.properties p
+    LEFT JOIN rds.pg_rds_public.property_features pf ON pf.property_id = p.id
+    WHERE p.status = 'ACTIVE'
+      AND pf.feature_code = 'identity_verification_only_web_portal'
+
+    UNION
+    SELECT DISTINCT property_id FROM idv_only
+    UNION
+    SELECT DISTINCT id as property_id FROM partner_properties
+    UNION
+    SELECT DISTINCT property_id FROM test_properties
+    UNION
+    SELECT DISTINCT property_id FROM phased_out_properties
+),
+filtered_properties AS (
+    SELECT apc.*
+    FROM active_properties_companies apc
+    LEFT JOIN all_excluded_properties ex ON apc.active_properties = ex.property_id
+    WHERE ex.property_id IS NULL
+)
+SELECT
+    COUNT(DISTINCT active_properties) as active_properties,
+    COUNT(DISTINCT companies_with_active_properties) as companies_with_active_properties,
+    SUM(property_units) as total_units
+FROM filtered_properties;

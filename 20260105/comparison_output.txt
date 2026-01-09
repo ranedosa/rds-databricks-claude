@@ -1,0 +1,999 @@
+[WARN] pyarrow is not installed by default since databricks-sql-connector 4.0.0,any arrow specific api (e.g. fetchmany_arrow) and cloud fetch will be disabled.If you need these features, please run pip install pyarrow or pip install databricks-sql-connector[pyarrow] to install
+
+================================================================================
+SALESFORCE ↔ RDS DATA VALIDATION
+================================================================================
+
+✓ Loaded 200 records from Salesforce CSV
+
+→ Connecting to Databricks...
+→ Querying Databricks for 200 properties...
+✓ Retrieved 183 records from Databricks
+
+================================================================================
+FIELD-BY-FIELD COMPARISON
+================================================================================
+
+✓ MATCHES: 94 properties
+✗ MISMATCHES: 89 properties
+⚠ MISSING IN RDS: 17 properties
+
+
+================================================================================
+DETAILED MISMATCH REPORT
+================================================================================
+
+
+❌ Property: Sunscape
+   ID: eb64681b-f57b-4f54-bb0a-1ef532b62a1e
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Lewis Apartment Communities
+     RDS/Source: Sunscape
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: CA
+
+
+❌ Property: Alexan Junction Heights
+   ID: 0d9be096-404e-4cbc-b648-7ad95d789112
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Alexan Junction Heights
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: Mallory Eastside
+   ID: 36bf8186-c23b-4002-aeca-b71b6e768fea
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Mallory Eastside
+
+
+❌ Property: 101 Via Mizner
+   ID: b3a0f534-65b5-4cab-9b9d-0b57e9a7ed01
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: 101 Via Mizner
+
+
+❌ Property: Country Club Tower Apartments
+   ID: e5c921b0-c519-483e-8954-4665e1da2a5a
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: United Property Management
+     RDS/Source: Country Club Tower Apartments
+
+
+❌ Property: Uptown at St Johns
+   ID: d5328c5c-7a98-4634-85ea-b98ed4b18f89
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Uptown at St Johns
+
+
+❌ Property: Hensley at Corona Pointe
+   ID: 68731bcf-35f4-40c4-99f6-42a3b8269ecb
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: AVENUE5 RESIDENTIAL
+     RDS/Source: Hensley at Corona Pointe
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: CA
+
+
+❌ Property: Walton Grove
+   ID: 7f9c84e2-59cd-46ab-8f4b-2e8ec662fae7
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Walton Communities
+     RDS/Source: Walton Grove
+
+
+❌ Property: Art House Sawyer Yards
+   ID: ae8b066f-b2f6-4c74-a0b9-6b8d29c3df6f
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Art House Sawyer Yards
+
+
+❌ Property: Fairways at Feather Sound
+   ID: 45c3031f-9a33-4d30-9a78-63a128c22084
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: American Landmark
+     RDS/Source: Fairways at Feather Sound
+
+
+❌ Property: Stone Canyon
+   ID: a448d246-390e-462f-9e39-c52449682351
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Name
+     Salesforce: Stone Canyon
+     RDS/Source: Stone Canyon -California
+
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Stone Canyon -California
+
+
+❌ Property: The Monet
+   ID: e9c5857a-c95f-499e-803d-8e71eab07507
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: AVENUE5 RESIDENTIAL
+     RDS/Source: The Monet
+
+
+❌ Property: Sienna Residences
+   ID: 1b6fa107-7591-4d44-83ca-7200b529a33d
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Sienna Residences
+
+
+❌ Property: Lumina Mountain Vista - LMV
+   ID: 807f8392-afe1-4656-a5db-fe44973d6485
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ResidentIQ
+     RDS/Source: Lumina Mountain Vista - LMV
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: AZ
+
+
+❌ Property: Harlowe
+   ID: 95547e00-b68b-422c-b078-8d178a8094d0
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Harlowe
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TN
+
+
+❌ Property: Vita
+   ID: 740ba76b-827d-49c1-b694-c64d1480ecec
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Fairfield Residential
+     RDS/Source: Vita
+
+
+❌ Property: Scandia Apartments
+   ID: 1b439602-723c-4a11-8fe2-6ec7ed413560
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: StoneCreek Communities
+     RDS/Source: Scandia Apartments
+
+
+❌ Property: Alcott
+   ID: 9842f7cd-e15c-4380-9ab9-64b5d6f54f78
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Kairoi Residential
+     RDS/Source: Alcott
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: CO
+
+
+❌ Property: San Estrella
+   ID: b1977c24-075c-4b09-a187-3e43a551533e
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Southhampton Management, Inc.
+     RDS/Source: San Estrella
+
+
+❌ Property: Ede
+   ID: 50cf10ae-381c-4799-83e5-392844387a65
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Jefferson Apartment Group
+     RDS/Source: Ede
+
+
+❌ Property: Hearthstone at City Center - HCC
+   ID: fc9b85f4-cd18-41e5-acd8-5c102a6153de
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Inhabit
+     RDS/Source: Hearthstone at City Center - HCC
+
+
+❌ Property: Ranch at First Creek
+   ID: 51568201-9588-4044-b18e-dd4d6e1aba69
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: AVENUE5 RESIDENTIAL
+     RDS/Source: Ranch at First Creek
+
+
+❌ Property: Paso Real-1333-28f1c974-47f6-466c-b286-53387858f659
+   ID: b2427886-d9a5-437d-80a6-4e9c81862e45
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ResMan
+     RDS/Source: Paso Real-1333-28f1c974-47f6-466c-b286-53387858f659
+
+
+❌ Property: Mountain View Casitas - MVC
+   ID: a9f9d036-d4c5-4a17-a194-c924f27df23d
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ResidentIQ
+     RDS/Source: Mountain View Casitas - MVC
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: AZ
+
+
+❌ Property: Ardmore
+   ID: 8c76efb7-e81d-4ce6-b15a-e356cfa4b21e
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: K3 Holdings
+     RDS/Source: Ardmore
+
+
+❌ Property: Linea
+   ID: e871e34f-b280-4197-8c73-c6bf88f36b1c
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Linea
+
+
+❌ Property: Maplewood
+   ID: cf4553ae-4be1-476e-93a0-2026e5f06c52
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Cirrus Asset Management, Inc.
+     RDS/Source: Maplewood
+
+
+❌ Property: Sentral Union Station
+   ID: 65d3d420-2610-4e1c-a4c8-0c689abb1261
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Sentral
+     RDS/Source: Sentral Union Station
+
+
+❌ Property: Vue at Belleair
+   ID: 0bbed7bc-ca44-4ee6-84ad-6eac60c088ed
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Vue at Belleair
+
+
+❌ Property: Canyon Crest Views
+   ID: 204b80dd-430f-44dd-8ad8-fbaea0b6a41f
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Afton Properties
+     RDS/Source: Canyon Crest Views
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: CA
+
+
+❌ Property: Biscayne Shores
+   ID: 99b7fa0c-70f3-4299-97cf-13b7e8e79955
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Related
+     RDS/Source: Biscayne Shores
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: FL
+
+
+❌ Property: Calibre Brooke
+   ID: 50fffc07-8c35-4ac3-aae5-018a3ab0583c
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Sterling Realty Management
+     RDS/Source: Calibre Brooke
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: GA
+
+
+❌ Property: Bell Cityline
+   ID: 8702a3c3-c2af-49bf-9df6-72df65f4ec13
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Bell Partners, Inc.
+     RDS/Source: Bell Cityline
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: J Sol
+   ID: a3cf535f-c6b1-4321-801d-6061f12912fd
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Jefferson Apartment Group
+     RDS/Source: J Sol
+
+
+❌ Property: Llewellyn
+   ID: 2a891536-dd56-4b82-8c11-456abd7a1e50
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Llewellyn
+
+
+❌ Property: Carlton Arms of Ocala
+   ID: 5d760f07-12e3-4861-8683-88fa387437e7
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Mahaffey Apartment Company
+     RDS/Source: Carlton Arms of Ocala
+
+
+❌ Property: Town Vineland
+   ID: 8e6f798e-a47f-4f6b-91d9-ce49ba9d0f9e
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Related
+     RDS/Source: Town Vineland
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: FL
+
+
+❌ Property: Miami Bay Waterfront Midtown Residences
+   ID: 686fc6a1-b1a4-448e-9b9c-bc84a3061e00
+   Mismatches: 3
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: United Property Management
+     RDS/Source: Miami Bay Waterfront Midtown Residences
+
+   Field: Address__Street__s
+     Salesforce: 601 Northeast 39th Street
+     RDS/Source: 559 NE 39th St
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: FL
+
+
+❌ Property: Ramblewood
+   ID: e6ba0ce6-f652-493f-8af3-c55b58196eaa
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Elon Property Management
+     RDS/Source: Ramblewood
+
+
+❌ Property: Forest Place
+   ID: 480c229c-001f-4680-ba54-1320b9189771
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Pegasus Residential
+     RDS/Source: Forest Place
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: FL
+
+
+❌ Property: Thayne
+   ID: 4ad0a27d-de28-41b3-b582-25fff97f136d
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Thayne
+
+
+❌ Property: Houston Lake
+   ID: 8b6bde82-5688-4860-9a03-ecfdd2ec0702
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Pegasus Residential
+     RDS/Source: Houston Lake
+
+
+❌ Property: Aston at Uptown
+   ID: f12e8d83-0808-4a9e-8178-1f898791615c
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Aston at Uptown
+
+
+❌ Property: Elan Huntington Beach
+   ID: eb8661d4-a3f5-4dff-b778-68f5aa7ab12e
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Elan Huntington Beach
+
+
+❌ Property: Avia Lowry
+   ID: 245f27de-88fe-49d7-a918-e78a0e1e346c
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Avia Lowry
+
+
+❌ Property: 3100 Pearl
+   ID: 90bdc505-66f1-4547-a644-3a41958d503c
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Kairoi Residential
+     RDS/Source: 3100 Pearl
+
+
+❌ Property: Sagewind Ranch
+   ID: 9e35d318-c0f6-4d00-97cf-516af64ef332
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Sagewind Ranch
+
+
+❌ Property: Avana Eastlake
+   ID: 7612ccea-89a7-4c57-9218-685c7198f882
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Avana Eastlake
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: CO
+
+
+❌ Property: Bowen Apartments
+   ID: 702dfbbd-a4bb-4e52-bd1d-2db2ab65efb1
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Fairfield Residential
+     RDS/Source: Bowen Apartments
+
+
+❌ Property: Meadowood Townhomes
+   ID: 62dc91ec-f10c-435e-94f0-3f3b6a0cc4f3
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: DHS Management Company
+     RDS/Source: Meadowood Townhomes
+
+
+❌ Property: Skyhouse Raleigh
+   ID: f92f1f2a-5e84-4ec4-bccd-f28b280ae990
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Skyhouse Raleigh
+
+
+❌ Property: Creekside Village - CSV
+   ID: 71374e78-a4f2-4ce4-9367-ba1be04674df
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Inhabit
+     RDS/Source: Creekside Village - CSV
+
+
+❌ Property: Ballantyne Commons Simpsonville
+   ID: ab893299-5554-4455-9bfd-3475c5e59c3a
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Southwood Realty
+     RDS/Source: Ballantyne Commons Simpsonville
+
+
+❌ Property: Hidden Oaks
+   ID: 78e9e16e-fcc6-41da-b326-8e200a302db7
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: First Pointe Management Group
+     RDS/Source: Hidden Oaks
+
+
+❌ Property: Artea at Southbank
+   ID: ac86a329-3d2f-40ce-8c1f-b0201533becb
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Artea at Southbank
+
+
+❌ Property: View 34
+   ID: 85015c10-d29c-4617-9876-d2a5f3883e50
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: UDR
+     RDS/Source: View 34
+
+   Field: Address__Street__s
+     Salesforce: 401 E 34th St
+     RDS/Source: 401 East 34th Street
+
+
+❌ Property: 51 at Southaven
+   ID: bfa83e41-7ec9-4cea-9d27-1efb16c27715
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: RR Living
+     RDS/Source: 51 at Southaven
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: MS
+
+
+❌ Property: Murrieta Meadows Apartments
+   ID: c43fc737-7585-4e96-bec3-296e5cfe8588
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Viewpoint Equity, LLC
+     RDS/Source: Murrieta Meadows Apartments
+
+
+❌ Property: Verdell Pointe
+   ID: 5c2bcf8d-304a-4386-8b11-84888a6e43f0
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: FPI Management
+     RDS/Source: Verdell Pointe
+
+
+❌ Property: Legacy at Mayland
+   ID: da3c5248-4878-48b9-8233-c04dc29312f9
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: UDR
+     RDS/Source: Legacy at Mayland
+
+
+❌ Property: TRIO at Jubilee Park
+   ID: 28a8f26d-761a-4438-82d9-ad7920052049
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Cambridge Management Services
+     RDS/Source: TRIO at Jubilee Park
+
+
+❌ Property: Park 120
+   ID: f544c59e-b123-43a7-9228-b5546dca3cd5
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Park 120
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: WA
+
+
+❌ Property: Joshua Hills
+   ID: 5f2295ea-9fac-411e-a022-c3641a06c12e
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Keller Investment Properties
+     RDS/Source: Joshua Hills
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: NV
+
+
+❌ Property: Encore Narcoossee
+   ID: 9f4a68cc-5b37-4e00-9323-47990043d255
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Encore Narcoossee
+
+
+❌ Property: Stanza Little Italy
+   ID: 14316a56-7e04-4e3c-9d87-2d439ec61c70
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Stanza Little Italy
+
+
+❌ Property: Jefferson Cove
+   ID: 54f5f357-3c2a-4482-afc1-f9032321cc80
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Cushman & Wakefield
+     RDS/Source: Jefferson Cove
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: Azure Apartments
+   ID: dc2a2853-4eb7-4fcd-92a0-24110112f6ef
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Morgan Group, Inc.
+     RDS/Source: Azure Apartments
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: Harbor Landing
+   ID: e256292c-98f5-4542-a22f-7bdb96ff5954
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Harbor Landing
+
+
+❌ Property: Reve
+   ID: 03f51103-a231-4115-9b88-ba49e651a0a4
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Helio Property Management
+     RDS/Source: Reve
+
+
+❌ Property: Mansions at Oak Point
+   ID: cf29d92c-6c96-4acd-88a2-099da8e47afb
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: W3 Luxury Living
+     RDS/Source: Mansions at Oak Point
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: Carlisle and Vine
+   ID: 5e424eee-3cf6-4834-aaf3-c1d9497440bd
+   Mismatches: 3
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Carlisle and Vine
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+   Field: Address__PostalCode__s
+     Salesforce: 75204
+     RDS/Source: 75219
+
+
+❌ Property: The Cortesin t Eilan
+   ID: eae18e9d-9cbb-44c1-a9a7-fc6445d833f4
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: The Cortesin t Eilan
+
+
+❌ Property: Reserves at Alafaya
+   ID: fbccf052-8fc2-4b43-aeea-ce3fbe044f7f
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Berkshire Residential Investments
+     RDS/Source: Reserves at Alafaya
+
+
+❌ Property: Flats at Columbia Pike
+   ID: e545be5b-cf62-47e3-8e8e-bab606c9191f
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: AION Management
+     RDS/Source: Flats at Columbia Pike
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: MD
+
+
+❌ Property: Prose at Ballpark Village
+   ID: 349bc7b0-b710-4837-ac0a-3780f81dbca8
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Prose at Ballpark Village
+
+
+❌ Property: Caroline at Rogers Ranch
+   ID: 2d0c3cf7-f031-4cf8-9f58-1261a8b41de7
+   Mismatches: 4
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Morgan Group, Inc.
+     RDS/Source: Caroline at Rogers Ranch
+
+   Field: Address__Street__s
+     Salesforce: 17475 Happys Round
+     RDS/Source: 3331 N Loop 1604 W
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+   Field: Address__PostalCode__s
+     Salesforce: 78257
+     RDS/Source: 78216
+
+
+❌ Property: Longshore Commons
+   ID: 84975a19-bf82-41cb-965b-fca455d417a3
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Pegasus Residential
+     RDS/Source: Longshore Commons
+
+
+❌ Property: Citizen & Oake Apartments - 18165
+   ID: a6373aa3-3354-429d-9fc1-ddb598a08b52
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Entrata
+     RDS/Source: Citizen & Oake Apartments - 18165
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: WA
+
+
+❌ Property: The Groves
+   ID: 01cd3433-2436-4876-b598-205f97f331e8
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: RBM Partners
+     RDS/Source: The Groves
+
+
+❌ Property: Hickory Creek
+   ID: 9cca06d0-c653-4038-a32b-a458ff4944ed
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Pegasus Residential
+     RDS/Source: Hickory Creek
+
+
+❌ Property: Jackson Square-1333-c4918667-6ad7-4fa7-9779-7b6beb30a8d4
+   ID: d14f556f-0a8f-4e24-a779-789272d6afce
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ResMan
+     RDS/Source: Jackson Square-1333-c4918667-6ad7-4fa7-9779-7b6beb30a8d4
+
+
+❌ Property: Cashel Springs
+   ID: 9ecf86e7-9ed6-485b-8704-b8c30c3a3e17
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Name
+     Salesforce: Cashel Springs
+     RDS/Source: Cashel Springs - MS
+
+   Field: Company_Name__c
+     Salesforce: RPM Living
+     RDS/Source: Cashel Springs - MS
+
+
+❌ Property: Sendero Trace
+   ID: f00c7f4c-a39f-44ae-aff5-596f059fe42c
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Sendero Trace
+
+
+❌ Property: Verge
+   ID: 114f3f09-f152-4d51-b3cb-a86512152bee
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Greystar
+     RDS/Source: Verge
+
+
+❌ Property: Alexan Grove
+   ID: 6d21b512-54c3-41f6-b7af-a3d30a089aa1
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Alexan Grove
+
+
+❌ Property: Archer at Willowbrook-1313-1e822fed-b4e6-4acc-9b2f-5d31b0bfdbc2
+   ID: 6d547969-3154-4d5f-b1ce-96f9f9ee9271
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ResMan
+     RDS/Source: Archer at Willowbrook-1313-1e822fed-b4e6-4acc-9b2f-5d31b0bfdbc2
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: TX
+
+
+❌ Property: Marisol at Viera
+   ID: c2801043-4aa6-4a91-8459-685263ea07cb
+   Mismatches: 1
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: ZRS Management LLC
+     RDS/Source: Marisol at Viera
+
+
+❌ Property: Belmont Place - 18089
+   ID: b6bef1d7-0590-4dd0-858f-42b5cc27cf6c
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Entrata
+     RDS/Source: Belmont Place - 18089
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: GA
+
+
+❌ Property: The Point at Lakeside
+   ID: 81d4e7a4-73dc-4ce1-8e2f-e76f482d4874
+   Mismatches: 2
+   ----------------------------------------------------------------------------
+   Field: Company_Name__c
+     Salesforce: Panco Management
+     RDS/Source: The Point at Lakeside
+
+   Field: Address__StateCode__s
+     Salesforce: None
+     RDS/Source: FL
+
+
+================================================================================
+MISSING IN RDS
+================================================================================
+
+  - 8d94022a-84e3-4bc1-91d7-54bcf4210775
+  - 32f4b207-0a33-4e49-8246-ad113889d371
+  - 3917c8e5-51de-4bca-8238-5c2531db083a
+  - 67fcd1bf-bb42-41ba-931e-2399dc57f39c
+  - a5ba8bf2-037c-4bcf-bc23-0df15978e691
+  - 61b60819-66e3-4715-a694-01f9eba51ac5
+  - 485bc204-ac88-4fe0-b3bb-e54462daef4f
+  - 8b402684-2102-47a3-9596-d6fbb65ecd09
+  - f7f602f3-7d60-4582-b0b9-2f896e5c2f11
+  - f7961478-8460-4a55-b31c-f259df29ff6f
+  - 02bfd48b-be4d-43c4-a21a-5a865d9d7e92
+  - 9b87d5d8-75fb-441f-8d91-d2ef3a37c967
+  - e1477876-62df-4991-8a8e-b5df2eb1d740
+  - b98efe1d-3988-4a9d-814a-ef9cb4206547
+  - 313eecf4-5366-4f59-b062-23eb72977bcd
+  - a83b037f-9ac4-4efa-b972-a13e9548b8a3
+  - f159cb7f-eac6-489d-9be0-3a67a8bb09ac
+
+================================================================================
+SUMMARY
+================================================================================
+
+Total SF Records: 200
+Perfect Matches: 94 (47.0%)
+Records with Mismatches: 89 (44.5%)
+Missing in RDS: 17
+
+⚠️  VALIDATION FAILED - Found 89 mismatches

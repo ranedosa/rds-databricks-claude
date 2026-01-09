@@ -1,0 +1,51 @@
+rds_id,rds_name,rds_short_id,rds_sfdc_id,staging_id,staging_snappt_id,staging_production_id,pipeline_status,rds_id_to_snappt_id,rds_sfdc_to_staging_id,rds_sfdc_to_production_id
+b6d1d00d-e4da-4d5f-8d10-539dcc267367,Calypso Apartments,Oz9q3YeXdS,a01UL00000d5mbrYAA,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+6ec20b36-1799-4697-9930-e454e3c47611,One Lakefront,8A99mk6vKY,a01Dn00000HHTwNIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+5daa34fc-7b3f-4dbc-b356-43f1cb18b78c,Nita Santa Fe,DY5vJxuvbg,a01UL00000aqZkyYAE,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+acb83dff-94b6-416a-add6-92c904cf1515,Maestro,4QQk6PJbSO,a01Dn00000HHkslIAD,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+02846f85-b02a-4ffc-8bdb-8eb9efa1002d,Juxt,CPxgcdAHNT,a01Dn00000HHQCIIA5,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+4a5d4d03-7ebf-4375-b162-79fe124ab5bd,Inspiration at Frank Lloyd Wright,t3tu6bqrM6,a01Dn00000HHPxUIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+b1168d87-6aa2-4012-b54f-29ada6a140e1,Huxley,Ei5fYIS2s2,a01Dn00000HHPf3IAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+44bd9c76-c215-42d9-add5-38b7164c07e3,HUB 9,bZP5jYXVh2,a01Dn00000HHPkpIAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+a2d2017a-f99a-48d1-8676-fe38682a34f1,Commons Park West,50cg7BfYxO,a01Dn00000HHKpEIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+4d8c6d50-5d26-4cef-95ef-b3bdb6992eb8,Bella Terra,vEafjvLFxy,a01Dn00000HHelbIAD,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+9e39b5b2-6b83-4d94-80ed-15ea7a02fa6b,Adera,ZuQS13Kn7o,a01UL00000aqKAqYAM,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+9cfa7879-da0b-4b02-8352-d663ec3e1edf,Mt Olive Townhomes,5TLILMqotp,a01Dn00000HHlz0IAD,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+55069d12-fd28-41d6-83b8-bb5990c24647,The Arlowe,ZNVVmAGmCq,a01Dn00000HHGzUIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+5d58f7fa-e19a-4c5e-bfee-94e4ebb7ff6a,ibex Sweetwater,b87YrbhfXS,a01Dn00000HHSRHIA5,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+2e167356-c6d7-4beb-9016-2b8137cda16d,ibex Park,WLmwjzZDdB,a01Dn00000HHNaQIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+4610c50b-57f1-4f9c-8893-88efa36583a0,Centerview Park,uOKHHAnCbT,a01Dn00000HHJrvIAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+410bf3aa-fda9-45f5-94fa-08e4466be640,The Village on West Seminary,UyJzbpMY8l,a01UL00000cr3WYYAY,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+2e0bc222-3c42-4dbb-8f64-037031fcea73,Cove at Tiburon,jEs8YbxCJx,a01Dn00000HHLTKIA5,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ac23a1b4-e963-4a8e-945a-9ce29188c393,mResidences Miracle Mile,HuclFrDCVZ,a01UL00000cXsGjYAK,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ee89725c-38ff-4342-8de4-40b4a8a549a2,Wabash Landing,3A6KWMA0rW,a01Dn00000HHbEDIA1,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+eb7bc633-0a29-4375-b30b-d1a96eefb258,UNITi Montrose,6qNQsmOT0q,a01Dn00000HIzTtIAL,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+046e956d-347a-47a1-8fba-a5059b01bebc,UNITi Bishop Arts,5oYSyDF81y,a01UL00000YXuXkYAL,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+6fa05834-727b-4d4e-8cfb-90bf3d947749,Post Chicago,Y2OliVHIJU,a01UL00000YYOqkYAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ec71cb59-9db4-4ffa-9edb-3333c6cc9acf,i5 Wynwood,3nFnta83ca,a01Dn00000HJQm0IAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+52f2ac8f-d686-4611-b715-43df0d8d8841,Farmhouse at Lantern Commons,S5Q8MnV2wA,a01UL00000YYHneYAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ff743d8c-8376-4b22-8d08-c9de8c0cb40c,The Orchard Apartments,Bhw924pVuF,a01UL00000dWxzOYAS,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+1d9e96cb-e980-4b92-be75-af5e989837d3,Enduro,dDlovwVPGH,a01UL00000dWhUsYAK,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+52de1495-d12a-4a1c-8d74-e8ac97d6fb04,Albion on Northwest,qlVDbydqbA,a01Dn00000HHGXHIA5,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ff5c5c06-6157-4c83-b7e0-8b4d44cb184e,H2O Townhomes,Pg6LQdCDnA,a01UL00000dWikIYAS,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+43ef77ea-62ab-47a5-86ae-5daeaa317b56,West 5th LA,mb8TDkMFqN,a01UL00000d0RHuYAM,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+32db46db-95af-46b7-b912-d8de5b61844e,Fossil Cove,FZglvm5TU2,a01UL00000d5rgMYAQ,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+9e017b35-125b-45af-aa08-c4d34828c780,Promenade Place,aZciGUhiKr,a01Dn00000HHVo2IAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+03f75a16-82e8-404d-b176-12656927a922,Haven Dell,BBOCIBNxch,a01UL00000d4VN1YAM,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+60e94456-e6e1-44ba-b047-9240be2383ec,Sage North,It4uF70rbJ,a01UL00000beMMJYA2,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+9b3ba424-785c-43c9-b6cd-e417cb890ed5,Water Tower Flats,ik5yZk8Q6n,a01Dn00000HHtOLIA1,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+09990ade-1d06-4203-b8f0-860ac5af3bb8,Villas on Main,FSCmwBENYT,a01Dn00000HHvRdIAL,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+e1cfcab7-b081-40d4-8898-6f4b3e4bc782,Pinnacle Highbury,9FLIuY7JIM,a01Dn00000HHnQrIAL,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+a866fa92-dd03-4267-96fa-20ee75591d47,One West,TRm19rIdYa,a01Dn00000HHTxiIAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+5bddae6b-91bb-402d-871a-8d3a52496922,Mirella at Foxboro,R5PwLIw5Q3,a01Dn00000HHSvPIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+dc4cf800-1622-434a-b01b-d21ddca5105e,Intro,0qd1ayzMHD,a01UL00000FTpo9YAD,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+0b6ef13d-afaa-4a85-a681-740a622d7e88,Bria,4NacZ3QwTl,a01Dn00000HHfAVIA1,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+768c8c03-9afa-4ad8-9b56-d29f620c6e63,Bravada 193,K4QQw6eGEr,a01Dn00000HHf4RIAT,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+2aefab22-b721-45ef-a5f0-4468a78933ee,Avanti at Farmington Station,KRfkx7BOnz,a01Dn00000HHHRzIAP,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+ef454df7-9e92-4125-9e89-f45e20ee84ad,Banner Hill,qLzaxaUHFE,a01UL00000dWzOUYA0,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+f546e673-bec7-4662-b352-8daa72e4d57f,Rockwell Village,7DsPr8eJlA,a01Dn00000HHw5HIAT,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+0665b7ad-02fc-4aa1-88df-61c9df5d1e30,Elofts,nvfP47wD0H,a01Dn00000HHciZIAT,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+3b2cfac4-2f6f-4478-8f3c-efee65c50299,The Battery,yoCqddi2YV,a01Dn00000HHI0AIAX,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+61ec35da-1136-42ee-8086-fbcdaac8f269,The Parkway on Westlake - MS,G1n65qq67p,a01Dn00000HHUqlIAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+7a75c9d9-27c6-47fa-961f-375d090322d9,Twin Palms,eLeLgNO86M,a01Dn00000HHaH8IAL,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match
+6585e69c-4ec4-4fdf-ba79-fb713bf163c0,Grove,nvCnh42v9I,a01Dn00000HHOd0IAH,,,,1. NOT IN STAGING,✗ No match,✗ No match,✗ No match

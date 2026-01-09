@@ -1,0 +1,121 @@
+-- ============================================================================
+-- PILOT CREATE FILTER - Use in Census Sync A Configuration
+-- Copy the WHERE clause below into Census "Custom Filter" field
+-- ============================================================================
+
+-- This filters to ONLY the 50 pilot CREATE properties
+
+WHERE rds_property_id IN (
+  '5f8b4551-b325-47eb-bfa0-315384b9e959',
+  'e666590d-9171-4fde-861a-4b8962b6a27a',
+  '65349947-bac2-489a-9900-42593e574454',
+  'ceb9f54c-b868-43de-a1b7-f1b863e389eb',
+  'b1a5257a-89ce-42c2-91b7-df48346eaa5c',
+  '8b82e1ab-299f-41df-b7e9-c50bb1751c66',
+  'a0095b96-0dc6-4729-9de8-76cf950fd22c',
+  'bbb38cb4-8219-48e8-b2e9-33e6689354d5',
+  '0bc40fad-123f-4689-a317-2a4eec7ea1bc',
+  'cf839b7b-d0a5-4bb7-964f-c1d76adb877b',
+  '0015a17e-8192-4411-b630-efc2a4ed5b00',
+  '2e3cfd55-8200-4ffc-9973-ed2c6c727255',
+  '7d63d82a-88d6-4e8e-b138-8a54cc728393',
+  '299eef76-f08b-481b-a052-33bb938249de',
+  '8a5796b7-0f21-4a6e-ad73-0a3670385e54',
+  '1076536e-d192-407d-ba23-8a5deeb26da2',
+  'b1f06ff2-5edd-49d9-8344-a709716481f8',
+  'cfc5813e-d972-47a9-b091-6d51601dbd6a',
+  '7e819985-de2c-4189-b44a-36dd9bf38cda',
+  '9ce80285-c48d-4d63-9a4e-4919ad36db09',
+  'd7dd70c1-5498-496c-bd44-e90eb6f36f54',
+  'b6d1d00d-e4da-4d5f-8d10-539dcc267367',
+  '6ec20b36-1799-4697-9930-e454e3c47611',
+  '5daa34fc-7b3f-4dbc-b356-43f1cb18b78c',
+  'acb83dff-94b6-416a-add6-92c904cf1515',
+  '02846f85-b02a-4ffc-8bdb-8eb9efa1002d',
+  '4a5d4d03-7ebf-4375-b162-79fe124ab5bd',
+  'b1168d87-6aa2-4012-b54f-29ada6a140e1',
+  '44bd9c76-c215-42d9-add5-38b7164c07e3',
+  'a2d2017a-f99a-48d1-8676-fe38682a34f1',
+  '4d8c6d50-5d26-4cef-95ef-b3bdb6992eb8',
+  '9e39b5b2-6b83-4d94-80ed-15ea7a02fa6b',
+  '9cfa7879-da0b-4b02-8352-d663ec3e1edf',
+  '5d58f7fa-e19a-4c5e-bfee-94e4ebb7ff6a',
+  '2e167356-c6d7-4beb-9016-2b8137cda16d',
+  '4610c50b-57f1-4f9c-8893-88efa36583a0',
+  '410bf3aa-fda9-45f5-94fa-08e4466be640',
+  'ac23a1b4-e963-4a8e-945a-9ce29188c393',
+  'ee89725c-38ff-4342-8de4-40b4a8a549a2',
+  'eb7bc633-0a29-4375-b30b-d1a96eefb258',
+  '046e956d-347a-47a1-8fba-a5059b01bebc',
+  '6fa05834-727b-4d4e-8cfb-90bf3d947749',
+  'ec71cb59-9db4-4ffa-9edb-3333c6cc9acf',
+  '52f2ac8f-d686-4611-b715-43df0d8d8841',
+  'ff743d8c-8376-4b22-8d08-c9de8c0cb40c',
+  '1d9e96cb-e980-4b92-be75-af5e989837d3',
+  '52de1495-d12a-4a1c-8d74-e8ac97d6fb04',
+  'ff5c5c06-6157-4c83-b7e0-8b4d44cb184e',
+  '43ef77ea-62ab-47a5-86ae-5daeaa317b56',
+  '32db46db-95af-46b7-b912-d8de5b61844e'
+)
+
+-- ============================================================================
+-- VERIFICATION QUERY
+-- Run this in Databricks to verify you'll get exactly 50 properties
+-- ============================================================================
+
+SELECT COUNT(*) AS pilot_create_count
+FROM crm.sfdc_dbx.properties_to_create
+WHERE rds_property_id IN (
+  '5f8b4551-b325-47eb-bfa0-315384b9e959',
+  'e666590d-9171-4fde-861a-4b8962b6a27a',
+  '65349947-bac2-489a-9900-42593e574454',
+  'ceb9f54c-b868-43de-a1b7-f1b863e389eb',
+  'b1a5257a-89ce-42c2-91b7-df48346eaa5c',
+  '8b82e1ab-299f-41df-b7e9-c50bb1751c66',
+  'a0095b96-0dc6-4729-9de8-76cf950fd22c',
+  'bbb38cb4-8219-48e8-b2e9-33e6689354d5',
+  '0bc40fad-123f-4689-a317-2a4eec7ea1bc',
+  'cf839b7b-d0a5-4bb7-964f-c1d76adb877b',
+  '0015a17e-8192-4411-b630-efc2a4ed5b00',
+  '2e3cfd55-8200-4ffc-9973-ed2c6c727255',
+  '7d63d82a-88d6-4e8e-b138-8a54cc728393',
+  '299eef76-f08b-481b-a052-33bb938249de',
+  '8a5796b7-0f21-4a6e-ad73-0a3670385e54',
+  '1076536e-d192-407d-ba23-8a5deeb26da2',
+  'b1f06ff2-5edd-49d9-8344-a709716481f8',
+  'cfc5813e-d972-47a9-b091-6d51601dbd6a',
+  '7e819985-de2c-4189-b44a-36dd9bf38cda',
+  '9ce80285-c48d-4d63-9a4e-4919ad36db09',
+  'd7dd70c1-5498-496c-bd44-e90eb6f36f54',
+  'b6d1d00d-e4da-4d5f-8d10-539dcc267367',
+  '6ec20b36-1799-4697-9930-e454e3c47611',
+  '5daa34fc-7b3f-4dbc-b356-43f1cb18b78c',
+  'acb83dff-94b6-416a-add6-92c904cf1515',
+  '02846f85-b02a-4ffc-8bdb-8eb9efa1002d',
+  '4a5d4d03-7ebf-4375-b162-79fe124ab5bd',
+  'b1168d87-6aa2-4012-b54f-29ada6a140e1',
+  '44bd9c76-c215-42d9-add5-38b7164c07e3',
+  'a2d2017a-f99a-48d1-8676-fe38682a34f1',
+  '4d8c6d50-5d26-4cef-95ef-b3bdb6992eb8',
+  '9e39b5b2-6b83-4d94-80ed-15ea7a02fa6b',
+  '9cfa7879-da0b-4b02-8352-d663ec3e1edf',
+  '5d58f7fa-e19a-4c5e-bfee-94e4ebb7ff6a',
+  '2e167356-c6d7-4beb-9016-2b8137cda16d',
+  '4610c50b-57f1-4f9c-8893-88efa36583a0',
+  '410bf3aa-fda9-45f5-94fa-08e4466be640',
+  'ac23a1b4-e963-4a8e-945a-9ce29188c393',
+  'ee89725c-38ff-4342-8de4-40b4a8a549a2',
+  'eb7bc633-0a29-4375-b30b-d1a96eefb258',
+  '046e956d-347a-47a1-8fba-a5059b01bebc',
+  '6fa05834-727b-4d4e-8cfb-90bf3d947749',
+  'ec71cb59-9db4-4ffa-9edb-3333c6cc9acf',
+  '52f2ac8f-d686-4611-b715-43df0d8d8841',
+  'ff743d8c-8376-4b22-8d08-c9de8c0cb40c',
+  '1d9e96cb-e980-4b92-be75-af5e989837d3',
+  '52de1495-d12a-4a1c-8d74-e8ac97d6fb04',
+  'ff5c5c06-6157-4c83-b7e0-8b4d44cb184e',
+  '43ef77ea-62ab-47a5-86ae-5daeaa317b56',
+  '32db46db-95af-46b7-b912-d8de5b61844e'
+);
+
+-- Expected result: pilot_create_count = 50

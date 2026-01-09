@@ -1,0 +1,16 @@
+-- Quick test query - Run this first to verify SOQL execution works
+SELECT COUNT(Id)
+FROM Product_Property__c
+WHERE LastModifiedDate = TODAY
+
+-- If above works, try this to see actual records
+-- Highlight the query below and run it separately
+SELECT
+  Snappt_Property_ID__c,
+  Name,
+  Company_Name__c,
+  LastModifiedDate
+FROM Product_Property__c
+WHERE LastModifiedDate = TODAY
+ORDER BY LastModifiedDate DESC
+LIMIT 10
